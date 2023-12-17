@@ -1,0 +1,116 @@
+<html>
+<head>
+  <title>带花树</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1634"/>
+<h1>带花树</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">505</span>;
+
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m,head[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> tp[N],pre[N],match[N],flower[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> Q[N],size;
+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">struct</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">nd</span>{</span>
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> ne,to;
+}e[N*N];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">in</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">static</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> cnt;
+	e[++cnt].to=y;e[cnt].ne=head[x];head[x]=cnt;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">blossom</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> x==flower[x]?x:flower[x]=blossom(flower[x]);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">lca</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">static</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> C,vis[N];
+	++C;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(;x;x=pre[match[x]]){
+		x=blossom(x);
+		vis[x]=C;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(;y;y=pre[match[y]]){
+		y=blossom(y);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(vis[y]==C)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> y;
+	}
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">group</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> S)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span> (x!=S){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=match[x],z=pre[y];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span> (blossom(z)!=S) pre[z]=y;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span> (tp[y]!=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)tp[Q[++size]=y]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span> (tp[z]!=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)tp[Q[++size]=z]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		flower[blossom(x)]=blossom(y);
+		flower[blossom(y)]=blossom(z);
+		x=z;
+	}
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">find</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> s)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)tp[i]=pre[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,flower[i]=i;
+	tp[Q[size=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=s]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=size;++i){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=Q[i];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=head[x];i;i=e[i].ne){
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=e[i].to;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(tp[y]==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">continue</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(y==match[x])<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">continue</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(blossom(x)==blossom(y))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">continue</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!match[y]){
+				pre[y]=x;
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> v=y,nxt,u;v;v=nxt){
+					u=pre[v],nxt=match[u];
+					match[u]=v;
+					match[v]=u;
+				}
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+			}
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(tp[y]==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> LCA=lca(x,y);
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(blossom(x)!=LCA)pre[x]=y;
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(blossom(y)!=LCA)pre[y]=x;
+				group(x,LCA);
+				group(y,LCA);
+			}
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span>{
+				tp[y]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;pre[y]=x;
+				tp[Q[++size]=match[y]]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+			}
+		}
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y;i&lt;=m;++i){
+		<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;x,&amp;y);
+		in(x,y);in(y,x);
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> ans=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!match[i])ans+=find(i);
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,ans);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d &quot;</span>,match[i]);
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;\n&quot;</span>);
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Aconst%20int%20N%20%3D%20505%3B%0A%0A%0Aint%20n%2Cm%2Chead%5BN%5D%3B%0Aint%20tp%5BN%5D%2Cpre%5BN%5D%2Cmatch%5BN%5D%2Cflower%5BN%5D%3B%0Aint%20Q%5BN%5D%2Csize%3B%0Astruct%20nd%7B%0A%09int%20ne%2Cto%3B%0A%7De%5BN*N%5D%3B%0A%0Avoid%20in(int%20x%2Cint%20y)%7B%0A%09static%20int%20cnt%3B%0A%09e%5B%2B%2Bcnt%5D.to%3Dy%3Be%5Bcnt%5D.ne%3Dhead%5Bx%5D%3Bhead%5Bx%5D%3Dcnt%3B%0A%7D%0A%0Aint%20blossom(int%20x)%7B%0A%09return%20x%3D%3Dflower%5Bx%5D%3Fx%3Aflower%5Bx%5D%3Dblossom(flower%5Bx%5D)%3B%0A%7D%0A%0Aint%20lca(int%20x%2Cint%20y)%7B%0A%09static%20int%20C%2Cvis%5BN%5D%3B%0A%09%2B%2BC%3B%0A%09for(%3Bx%3Bx%3Dpre%5Bmatch%5Bx%5D%5D)%7B%0A%09%09x%3Dblossom(x)%3B%0A%09%09vis%5Bx%5D%3DC%3B%0A%09%7D%0A%09for(%3By%3By%3Dpre%5Bmatch%5By%5D%5D)%7B%0A%09%09y%3Dblossom(y)%3B%0A%09%09if(vis%5By%5D%3D%3DC)return%20y%3B%0A%09%7D%0A%7D%0A%0Avoid%20group(int%20x%2Cint%20S)%7B%0A%09while%20(x!%3DS)%7B%0A%09%09int%20y%3Dmatch%5Bx%5D%2Cz%3Dpre%5By%5D%3B%0A%09%09if%20(blossom(z)!%3DS)%20pre%5Bz%5D%3Dy%3B%0A%09%09if%20(tp%5By%5D!%3D1)tp%5BQ%5B%2B%2Bsize%5D%3Dy%5D%3D1%3B%0A%09%09if%20(tp%5Bz%5D!%3D1)tp%5BQ%5B%2B%2Bsize%5D%3Dz%5D%3D1%3B%0A%09%09flower%5Bblossom(x)%5D%3Dblossom(y)%3B%0A%09%09flower%5Bblossom(y)%5D%3Dblossom(z)%3B%0A%09%09x%3Dz%3B%0A%09%7D%0A%7D%0A%0Abool%20find(int%20s)%7B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)tp%5Bi%5D%3Dpre%5Bi%5D%3D0%2Cflower%5Bi%5D%3Di%3B%0A%09tp%5BQ%5Bsize%3D1%5D%3Ds%5D%3D1%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dsize%3B%2B%2Bi)%7B%0A%09%09int%20x%3DQ%5Bi%5D%3B%0A%09%09for(int%20i%3Dhead%5Bx%5D%3Bi%3Bi%3De%5Bi%5D.ne)%7B%0A%09%09%09int%20y%3De%5Bi%5D.to%3B%0A%09%09%09if(tp%5By%5D%3D%3D2)continue%3B%0A%09%09%09if(y%3D%3Dmatch%5Bx%5D)continue%3B%0A%09%09%09if(blossom(x)%3D%3Dblossom(y))continue%3B%0A%09%09%09if(!match%5By%5D)%7B%0A%09%09%09%09pre%5By%5D%3Dx%3B%0A%09%09%09%09for(int%20v%3Dy%2Cnxt%2Cu%3Bv%3Bv%3Dnxt)%7B%0A%09%09%09%09%09u%3Dpre%5Bv%5D%2Cnxt%3Dmatch%5Bu%5D%3B%0A%09%09%09%09%09match%5Bu%5D%3Dv%3B%0A%09%09%09%09%09match%5Bv%5D%3Du%3B%0A%09%09%09%09%7D%0A%09%09%09%09return%201%3B%0A%09%09%09%7D%0A%09%09%09if(tp%5By%5D%3D%3D1)%7B%0A%09%09%09%09int%20LCA%3Dlca(x%2Cy)%3B%0A%09%09%09%09if(blossom(x)!%3DLCA)pre%5Bx%5D%3Dy%3B%0A%09%09%09%09if(blossom(y)!%3DLCA)pre%5By%5D%3Dx%3B%0A%09%09%09%09group(x%2CLCA)%3B%0A%09%09%09%09group(y%2CLCA)%3B%0A%09%09%09%7D%0A%09%09%09else%7B%0A%09%09%09%09tp%5By%5D%3D2%3Bpre%5By%5D%3Dx%3B%0A%09%09%09%09tp%5BQ%5B%2B%2Bsize%5D%3Dmatch%5By%5D%5D%3D1%3B%0A%09%09%09%7D%0A%09%09%7D%0A%09%7D%0A%09return%200%3B%0A%7D%0A%0Aint%20main()%7B%0A%09scanf(%22%25d%25d%22%2C%26n%2C%26m)%3B%0A%09for(int%20i%3D1%2Cx%2Cy%3Bi%3C%3Dm%3B%2B%2Bi)%7B%0A%09%09scanf(%22%25d%25d%22%2C%26x%2C%26y)%3B%0A%09%09in(x%2Cy)%3Bin(y%2Cx)%3B%0A%09%7D%0A%09int%20ans%3D0%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)if(!match%5Bi%5D)ans%2B%3Dfind(i)%3B%0A%09printf(%22%25d%5Cn%22%2Cans)%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)printf(%22%25d%20%22%2Cmatch%5Bi%5D)%3B%0A%09printf(%22%5Cn%22)%3B%0A%7D%0A%0A%60%60%60</center></span>
+</div></body></html> 

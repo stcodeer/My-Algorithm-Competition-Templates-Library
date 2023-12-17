@@ -1,0 +1,98 @@
+<html>
+<head>
+  <title>可持久化并查集</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1652"/>
+<h1>可持久化并查集</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e5</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> M = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">25</span>;
+ 
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> tot,ls[N*M],rs[N*M],w[N*M],d[N*M],rt[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m;
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">insert</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> &amp;x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> r,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> p,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> v)</span></span>{
+    x=++tot;
+    ls[x]=ls[y];rs[x]=rs[y];
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(l==r){
+		w[x]=v;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+	}
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(p&lt;=mid)insert(ls[x],ls[y],l,mid,p,v);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> insert(rs[x],rs[y],mid+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,r,p,v);
+}
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">init</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> &amp;x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> r)</span></span>{
+    x=++tot;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(l==r){
+		w[x]=l;d[x]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+	}
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    init(ls[x],l,mid);
+    init(rs[x],mid+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,r);
+}
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">add</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> r,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> p)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(l==r)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span>(d[x]++);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(p&lt;=mid)add(ls[x],l,mid,p);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> add(rs[x],mid+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,r,p);
+}
+ 
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">gf</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> r,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> p)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(l==r)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> w[x];
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(p&lt;=mid)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> gf(ls[x],l,mid,p);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> gf(rs[x],mid+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,r,p);
+}
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">find</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> r,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> p=gf(r,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n,x);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x==p)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> x;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> find(r,p);
+}
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+    init(rt[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>],<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,o,x,y;i&lt;=m;++i){
+        <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;o,&amp;x);
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(o==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+            <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;y);
+            rt[i]=rt[i<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>];
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> fx=find(rt[i],x),fy=find(rt[i],y);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(fx==fy)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">continue</span>;
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(d[fx]&lt;d[fy])swap(fx,fy);
+            insert(rt[i],rt[i<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>],<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n,fy,fx);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(d[fx]==d[fy])d[fx]++; 
+        }
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(o==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>)rt[i]=rt[x];
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(o==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>){
+            <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;y);
+            rt[i]=rt[i<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>];
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> fx=find(rt[i],x),fy=find(rt[i],y);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(fx==fy)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;1\n&quot;</span>);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span>    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;0\n&quot;</span>);
+        }
+    }
+}
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Aconst%20int%20N%20%3D%201e5%2B1%3B%0Aconst%20int%20M%20%3D%2025%3B%0A%20%0Aint%20tot%2Cls%5BN*M%5D%2Crs%5BN*M%5D%2Cw%5BN*M%5D%2Cd%5BN*M%5D%2Crt%5BN%5D%3B%0Aint%20n%2Cm%3B%0A%20%0Avoid%20insert(int%20%26x%2Cint%20y%2Cint%20l%2Cint%20r%2Cint%20p%2Cint%20v)%7B%0A%20%20%20%20x%3D%2B%2Btot%3B%0A%20%20%20%20ls%5Bx%5D%3Dls%5By%5D%3Brs%5Bx%5D%3Drs%5By%5D%3B%0A%20%20%20%20if(l%3D%3Dr)%7B%0A%09%09w%5Bx%5D%3Dv%3B%0A%09%09return%3B%0A%09%7D%0A%20%20%20%20int%20mid%3Dl%2Br%3E%3E1%3B%0A%20%20%20%20if(p%3C%3Dmid)insert(ls%5Bx%5D%2Cls%5By%5D%2Cl%2Cmid%2Cp%2Cv)%3B%0A%20%20%20%20else%20insert(rs%5Bx%5D%2Crs%5By%5D%2Cmid%2B1%2Cr%2Cp%2Cv)%3B%0A%7D%0A%20%0Avoid%20init(int%20%26x%2Cint%20l%2Cint%20r)%7B%0A%20%20%20%20x%3D%2B%2Btot%3B%0A%20%20%20%20if(l%3D%3Dr)%7B%0A%09%09w%5Bx%5D%3Dl%3Bd%5Bx%5D%3D1%3B%0A%09%09return%3B%0A%09%7D%0A%20%20%20%20int%20mid%3Dl%2Br%3E%3E1%3B%0A%20%20%20%20init(ls%5Bx%5D%2Cl%2Cmid)%3B%0A%20%20%20%20init(rs%5Bx%5D%2Cmid%2B1%2Cr)%3B%0A%7D%0A%20%0Avoid%20add(int%20x%2Cint%20l%2Cint%20r%2Cint%20p)%7B%0A%20%20%20%20if(l%3D%3Dr)return%20void(d%5Bx%5D%2B%2B)%3B%0A%20%20%20%20int%20mid%3Dl%2Br%3E%3E1%3B%0A%20%20%20%20if(p%3C%3Dmid)add(ls%5Bx%5D%2Cl%2Cmid%2Cp)%3B%0A%20%20%20%20else%20add(rs%5Bx%5D%2Cmid%2B1%2Cr%2Cp)%3B%0A%7D%0A%20%0A%20%0Aint%20gf(int%20x%2Cint%20l%2Cint%20r%2Cint%20p)%7B%0A%20%20%20%20if(l%3D%3Dr)return%20w%5Bx%5D%3B%0A%20%20%20%20int%20mid%3Dl%2Br%3E%3E1%3B%0A%20%20%20%20if(p%3C%3Dmid)return%20gf(ls%5Bx%5D%2Cl%2Cmid%2Cp)%3B%0A%20%20%20%20else%20return%20gf(rs%5Bx%5D%2Cmid%2B1%2Cr%2Cp)%3B%0A%7D%0A%20%0Aint%20find(int%20r%2Cint%20x)%7B%0A%20%20%20%20int%20p%3Dgf(r%2C1%2Cn%2Cx)%3B%0A%20%20%20%20if(x%3D%3Dp)return%20x%3B%0A%20%20%20%20return%20find(r%2Cp)%3B%0A%7D%0A%20%0Aint%20main()%7B%0A%20%20%20%20scanf(%22%25d%25d%22%2C%26n%2C%26m)%3B%0A%20%20%20%20init(rt%5B0%5D%2C1%2Cn)%3B%0A%20%20%20%20for(int%20i%3D1%2Co%2Cx%2Cy%3Bi%3C%3Dm%3B%2B%2Bi)%7B%0A%20%20%20%20%20%20%20%20scanf(%22%25d%25d%22%2C%26o%2C%26x)%3B%0A%20%20%20%20%20%20%20%20if(o%3D%3D1)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20scanf(%22%25d%22%2C%26y)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20rt%5Bi%5D%3Drt%5Bi-1%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20int%20fx%3Dfind(rt%5Bi%5D%2Cx)%2Cfy%3Dfind(rt%5Bi%5D%2Cy)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(fx%3D%3Dfy)continue%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(d%5Bfx%5D%3Cd%5Bfy%5D)swap(fx%2Cfy)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20insert(rt%5Bi%5D%2Crt%5Bi-1%5D%2C1%2Cn%2Cfy%2Cfx)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(d%5Bfx%5D%3D%3Dd%5Bfy%5D)d%5Bfx%5D%2B%2B%3B%20%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20if(o%3D%3D2)rt%5Bi%5D%3Drt%5Bx%5D%3B%0A%20%20%20%20%20%20%20%20if(o%3D%3D3)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20scanf(%22%25d%22%2C%26y)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20rt%5Bi%5D%3Drt%5Bi-1%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20int%20fx%3Dfind(rt%5Bi%5D%2Cx)%2Cfy%3Dfind(rt%5Bi%5D%2Cy)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(fx%3D%3Dfy)printf(%221%5Cn%22)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20%20%20%20printf(%220%5Cn%22)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0A%60%60%60</center></span>
+</div></body></html> 

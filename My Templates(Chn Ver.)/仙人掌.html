@@ -1,0 +1,74 @@
+<html>
+<head>
+  <title>仙人掌</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1630"/>
+<h1>仙人掌</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2e5</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> inf = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0x7fffffff</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m,head[N];
+<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span>&gt;g[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> tot,dfn[N],low[N];
+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">struct</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">nd</span>{</span>
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> ne,to;
+}e[N&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">in</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">static</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> cnt=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    e[++cnt].to=y;e[cnt].ne=head[x];head[x]=cnt;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">tj</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> fa=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">static</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> totw,q[N];
+    dfn[x]=low[x]=++totw;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=head[x];i;i=e[i].ne)
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(e[i].to!=fa){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=e[i].to;
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!dfn[y]){
+            q[++q[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]=i;
+            tj(y,x);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(low[y]&gt;=dfn[x]){
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> t;++tot;
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">do</span>{
+                    t=q[q[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]--];
+                    g[tot].push_back(e[t].to);
+                }<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(t!=i);
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(g[tot].size()==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)g[tot].push_back(e[t^<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>].to);
+            }
+            low[x]=min(low[x],low[y]);
+        }
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(dfn[y]&lt;dfn[x])q[++q[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]=i,low[x]=min(low[x],dfn[y]);
+    }
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y;i&lt;=m;++i){
+        <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;x,&amp;y);
+        in(x,y);in(y,x);
+    }
+    tot=n;tj(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=n+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=tot;++i)
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;j&lt;g[i].size();++i)
+    g[g[i][j]].push_back(i);
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Aconst%20int%20N%20%3D%202e5%2B5%3B%0Aconst%20int%20inf%20%3D%200x7fffffff%3B%0A%0Aint%20n%2Cm%2Chead%5BN%5D%3B%0Avector%3Cint%3Eg%5BN%5D%3B%0Aint%20tot%2Cdfn%5BN%5D%2Clow%5BN%5D%3B%0Astruct%20nd%7B%0A%20%20%20%20int%20ne%2Cto%3B%0A%7De%5BN%3C%3C1%5D%3B%0A%0Avoid%20in(int%20x%2Cint%20y)%7B%0A%20%20%20%20static%20int%20cnt%3D1%3B%0A%20%20%20%20e%5B%2B%2Bcnt%5D.to%3Dy%3Be%5Bcnt%5D.ne%3Dhead%5Bx%5D%3Bhead%5Bx%5D%3Dcnt%3B%0A%7D%0A%0Avoid%20tj(int%20x%2Cint%20fa%3D-1)%7B%0A%20%20%20%20static%20int%20totw%2Cq%5BN%5D%3B%0A%20%20%20%20dfn%5Bx%5D%3Dlow%5Bx%5D%3D%2B%2Btotw%3B%0A%20%20%20%20for(int%20i%3Dhead%5Bx%5D%3Bi%3Bi%3De%5Bi%5D.ne)%0A%20%20%20%20if(e%5Bi%5D.to!%3Dfa)%7B%0A%20%20%20%20%20%20%20%20int%20y%3De%5Bi%5D.to%3B%0A%20%20%20%20%20%20%20%20if(!dfn%5By%5D)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20q%5B%2B%2Bq%5B0%5D%5D%3Di%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20tj(y%2Cx)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(low%5By%5D%3E%3Ddfn%5Bx%5D)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20int%20t%3B%2B%2Btot%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20do%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20t%3Dq%5Bq%5B0%5D--%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20g%5Btot%5D.push_back(e%5Bt%5D.to)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7Dwhile(t!%3Di)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if(g%5Btot%5D.size()%3D%3D1)g%5Btot%5D.push_back(e%5Bt%5E1%5D.to)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20low%5Bx%5D%3Dmin(low%5Bx%5D%2Clow%5By%5D)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20else%20if(dfn%5By%5D%3Cdfn%5Bx%5D)q%5B%2B%2Bq%5B0%5D%5D%3Di%2Clow%5Bx%5D%3Dmin(low%5Bx%5D%2Cdfn%5By%5D)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aint%20main()%7B%0A%20%20%20%20scanf(%22%25d%25d%22%2C%26n%2C%26m)%3B%0A%20%20%20%20for(int%20i%3D1%2Cx%2Cy%3Bi%3C%3Dm%3B%2B%2Bi)%7B%0A%20%20%20%20%20%20%20%20scanf(%22%25d%25d%22%2C%26x%2C%26y)%3B%0A%20%20%20%20%20%20%20%20in(x%2Cy)%3Bin(y%2Cx)%3B%0A%20%20%20%20%7D%0A%20%20%20%20tot%3Dn%3Btj(1)%3B%0A%20%20%20%20for(int%20i%3Dn%2B1%3Bi%3C%3Dtot%3B%2B%2Bi)%0A%20%20%20%20for(int%20j%3D0%3Bj%3Cg%5Bi%5D.size()%3B%2B%2Bi)%0A%20%20%20%20g%5Bg%5Bi%5D%5Bj%5D%5D.push_back(i)%3B%0A%7D%0A%0A%60%60%60</center></span>
+</div></body></html> 

@@ -1,0 +1,96 @@
+<html>
+<head>
+  <title>半平面交</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1658"/>
+<h1>半平面交</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt; </span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">double</span> db;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e5</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,cnt;
+
+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">struct</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">P</span>{</span>
+	db x,y;
+	P(db _x=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,db _y=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>){x=_x;y=_y;}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">friend</span> P <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">operator</span> - (P a,P b){<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> P(a.x-b.x,a.y-b.y);}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">friend</span> db <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">operator</span> * (P a,P b){<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> a.x*b.y-b.x*a.y;}
+}ans[N];
+
+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">struct</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">L</span>{</span>
+	P a,b;
+	db k;
+	L(P _a=P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>),P _b=P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>),db _k=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>){a=_a;b=_b;k=_k;}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">friend</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">operator</span> &lt; (L a,L b){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(a.k==b.k)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> (b.b-a.a)*(b.a-a.a)&lt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> a.k&lt;b.k;
+	}
+}a[N],q[N];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">P <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">inter</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(L a,L b)</span></span>{
+	db k1,k2,t;
+	k1=(a.b-b.a)*(b.b-b.a);
+	k2=(b.b-b.a)*(a.a-b.a);
+	t=k1/(k1+k2);
+	P ans;
+	ans.x=a.b.x+(a.a.x-a.b.x)*t;
+	ans.y=a.b.y+(a.a.y-a.b.y)*t;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ans;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">jud</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(L a,L b,L t)</span></span>{
+	P p=inter(a,b);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> (t.a-p)*(t.b-p)&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">hpi</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	sort(a+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,a+n+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> tot=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(a[i].k!=a[tot].k)a[++tot]=a[i];
+	n=tot;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> L=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,R=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+	q[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=a[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];q[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=a[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>;i&lt;=n;++i){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(L&lt;R&amp;&amp;jud(q[R],q[R<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>],a[i]))R--;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(L&lt;R&amp;&amp;jud(q[L],q[L+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>],a[i]))L++;
+		q[++R]=a[i];
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(L&lt;R&amp;&amp;jud(q[R],q[R<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>],q[L]))R--;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(L&lt;R&amp;&amp;jud(q[L],q[L+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>],q[R]))L++;
+	q[R+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=q[L];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=L;i&lt;=R;++i)ans[++cnt]=inter(q[i],q[i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;n);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%lf%lf%lf%lf&quot;</span>,&amp;a[i].a.x,&amp;a[i].a.y,&amp;a[i].b.x,&amp;a[i].b.y);
+	a[++n]=L(P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>),P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>),<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);a[++n]=L(P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>),P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>),<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);
+	a[++n]=L(P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>),P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>),<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);a[++n]=L(P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10000</span>),P(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>),<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)a[i].k=<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">atan2</span>((a[i].b.y-a[i].a.y),(a[i].b.x-a[i].a.x));
+	hpi();
+	db res=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(cnt&gt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>){
+		ans[++cnt]=ans[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=cnt;++i)res+=ans[i]*ans[i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+		res=<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">fabs</span>(res)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+	}
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%.1lf&quot;</span>,res);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%20%0Ausing%20namespace%20std%3B%0Atypedef%20double%20db%3B%0Aconst%20int%20N%20%3D%201e5%2B1%3B%0A%0Aint%20n%2Ccnt%3B%0A%0Astruct%20P%7B%0A%09db%20x%2Cy%3B%0A%09P(db%20_x%3D0%2Cdb%20_y%3D0)%7Bx%3D_x%3By%3D_y%3B%7D%0A%09friend%20P%20operator%20-%20(P%20a%2CP%20b)%7Breturn%20P(a.x-b.x%2Ca.y-b.y)%3B%7D%0A%09friend%20db%20operator%20*%20(P%20a%2CP%20b)%7Breturn%20a.x*b.y-b.x*a.y%3B%7D%0A%7Dans%5BN%5D%3B%0A%0Astruct%20L%7B%0A%09P%20a%2Cb%3B%0A%09db%20k%3B%0A%09L(P%20_a%3DP(0%2C0)%2CP%20_b%3DP(0%2C0)%2Cdb%20_k%3D0)%7Ba%3D_a%3Bb%3D_b%3Bk%3D_k%3B%7D%0A%09friend%20bool%20operator%20%3C%20(L%20a%2CL%20b)%7B%0A%09%09if(a.k%3D%3Db.k)return%20(b.b-a.a)*(b.a-a.a)%3C%3D0%3B%0A%09%09return%20a.k%3Cb.k%3B%0A%09%7D%0A%7Da%5BN%5D%2Cq%5BN%5D%3B%0A%0AP%20inter(L%20a%2CL%20b)%7B%0A%09db%20k1%2Ck2%2Ct%3B%0A%09k1%3D(a.b-b.a)*(b.b-b.a)%3B%0A%09k2%3D(b.b-b.a)*(a.a-b.a)%3B%0A%09t%3Dk1%2F(k1%2Bk2)%3B%0A%09P%20ans%3B%0A%09ans.x%3Da.b.x%2B(a.a.x-a.b.x)*t%3B%0A%09ans.y%3Da.b.y%2B(a.a.y-a.b.y)*t%3B%0A%09return%20ans%3B%0A%7D%0A%0Abool%20jud(L%20a%2CL%20b%2CL%20t)%7B%0A%09P%20p%3Dinter(a%2Cb)%3B%0A%09return%20(t.a-p)*(t.b-p)%3C0%3B%0A%7D%0A%0Avoid%20hpi()%7B%0A%09sort(a%2B1%2Ca%2Bn%2B1)%3B%0A%09int%20tot%3D0%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)if(a%5Bi%5D.k!%3Da%5Btot%5D.k)a%5B%2B%2Btot%5D%3Da%5Bi%5D%3B%0A%09n%3Dtot%3B%0A%09int%20L%3D0%2CR%3D1%3B%0A%09q%5B0%5D%3Da%5B1%5D%3Bq%5B1%5D%3Da%5B2%5D%3B%0A%09for(int%20i%3D3%3Bi%3C%3Dn%3B%2B%2Bi)%7B%0A%09%09while(L%3CR%26%26jud(q%5BR%5D%2Cq%5BR-1%5D%2Ca%5Bi%5D))R--%3B%0A%09%09while(L%3CR%26%26jud(q%5BL%5D%2Cq%5BL%2B1%5D%2Ca%5Bi%5D))L%2B%2B%3B%0A%09%09q%5B%2B%2BR%5D%3Da%5Bi%5D%3B%0A%09%7D%0A%09while(L%3CR%26%26jud(q%5BR%5D%2Cq%5BR-1%5D%2Cq%5BL%5D))R--%3B%0A%09while(L%3CR%26%26jud(q%5BL%5D%2Cq%5BL%2B1%5D%2Cq%5BR%5D))L%2B%2B%3B%0A%09q%5BR%2B1%5D%3Dq%5BL%5D%3B%0A%09for(int%20i%3DL%3Bi%3C%3DR%3B%2B%2Bi)ans%5B%2B%2Bcnt%5D%3Dinter(q%5Bi%5D%2Cq%5Bi%2B1%5D)%3B%0A%7D%0A%0Aint%20main()%7B%0A%09scanf(%22%25d%22%2C%26n)%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)scanf(%22%25lf%25lf%25lf%25lf%22%2C%26a%5Bi%5D.a.x%2C%26a%5Bi%5D.a.y%2C%26a%5Bi%5D.b.x%2C%26a%5Bi%5D.b.y)%3B%0A%09a%5B%2B%2Bn%5D%3DL(P(0%2C0)%2CP(10000%2C0)%2C0)%3Ba%5B%2B%2Bn%5D%3DL(P(10000%2C0)%2CP(10000%2C10000)%2C0)%3B%0A%09a%5B%2B%2Bn%5D%3DL(P(10000%2C10000)%2CP(0%2C10000)%2C0)%3Ba%5B%2B%2Bn%5D%3DL(P(0%2C10000)%2CP(0%2C0)%2C0)%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)a%5Bi%5D.k%3Datan2((a%5Bi%5D.b.y-a%5Bi%5D.a.y)%2C(a%5Bi%5D.b.x-a%5Bi%5D.a.x))%3B%0A%09hpi()%3B%0A%09db%20res%3D0%3B%0A%09if(cnt%3E%3D3)%7B%0A%09%09ans%5B%2B%2Bcnt%5D%3Dans%5B1%5D%3B%0A%09%09for(int%20i%3D1%3Bi%3C%3Dcnt%3B%2B%2Bi)res%2B%3Dans%5Bi%5D*ans%5Bi%2B1%5D%3B%0A%09%09res%3Dfabs(res)%2F2%3B%0A%09%7D%0A%09printf(%22%25.1lf%22%2Cres)%3B%0A%09return%200%3B%0A%7D%0A%0A%60%60%60</center></span>
+</div></body></html> 

@@ -1,0 +1,151 @@
+<html>
+<head>
+  <title>直线与多边形</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1656"/>
+<h1>直线与多边形</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><p style="line-height: 160%; box-sizing: content-box; margin: 10px 0; color: #333;">直线的交<br/>
+凸多边形的判定<br/>
+点在多边形内的判定<br/>
+线段在多边形内的判定<br/>
+多边形的重心</p>
+<pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">double</span> db;
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> zero(x) (((x)&gt;0?(x):-(x))&lt;eps)</span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> _sign(x) ((x)&gt;eps?1:((x)&lt;-eps?2:0))</span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e3</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> offset = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e8</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> db eps = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e-8</span>; 
+
+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">struct</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">point</span>{</span>
+	db x,y;
+	point(db _x=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,db _y=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>){
+		x=_x;y=_y;
+	} 
+};
+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">struct</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">line</span>{</span>
+	point a,b;
+	line(point _a=point(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>),point _b=point(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>)){
+		a=_b;b=_b;
+	} 
+};
+
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//p0-&gt;p1与p0-&gt;p2的叉积 </span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">double</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">xmult</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(point p1,point p2,point p0)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> (p1.x-p0.x)*(p2.y-p0.y)-(p2.x-p0.x)*(p1.y-p0.y);
+}
+
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//直线的交点 </span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">point <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">intersection</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(line u,line v)</span></span>{
+	point ret=u.a;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">double</span> t=((u.a.x-v.a.x)*(v.a.y-v.b.y)-(u.a.y-v.a.y)*(v.a.x-v.b.x))
+			/((u.a.x-u.b.x)*(v.a.y-v.b.y)-(u.a.y-u.b.y)*(v.a.x-v.b.x));
+	ret.x+=(u.b.x-u.a.x)*t;
+	ret.y+=(u.b.y-u.a.y)*t;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//判定是否为凸多边形,顶点按顺时针或逆时针给出,允许相邻边共线</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">is_convex</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,point* p)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> s[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>]={<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>};
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)s[_sign(xmult(p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>)%n],p[i]))]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> s[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]|s[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>];
+}
+ 
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//判点在凸多边形内,顶点按顺时针或逆时针给出,在多边形边上返回2</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">inside_convex</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(point q,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,point* p)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> s[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>]={<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>};
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)s[_sign(xmult(p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n],q,p[i]))]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!s[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>])<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> s[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]|s[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>];
+}
+
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//判断点a,b是否在直线l的两侧</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">opposite_side</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(point p1,point p2,line l)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> xmult(l.a,p1,l.b)*xmult(l.a,p2,l.b)&lt;-eps;
+}
+
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//判断点是否在线段上</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">dot_online_in</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(point p,point l1,point l2)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> zero(xmult(p,l1,l2))&amp;&amp;(l1.x-p.x)*(l2.x-p.x)&lt;eps&amp;&amp;(l1.y-p.y)*(l2.y-p.y)&lt;eps;
+}
+ 
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//判定点是否在任意多边形内,顶点按顺时针或逆时针给出</span>
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//on_edge表示点在多边形边上时的返回值,offset为多边形坐标上限</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">inside_polygon</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(point q,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,point* p,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> on_edge=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)</span></span>{
+	point q2;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,count;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(i&lt;n){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(count=i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,q2.x=rand()+offset,q2.y=rand()+offset;i&lt;n;++i)
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(dot_online_in(q,p[i],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n]))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> on_edge;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(zero(xmult(q,q2,p[i])))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opposite_side(p[i],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n],line(q,q2))&amp;&amp;opposite_side(q,q2,line(p[i],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n])))count++;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> count&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+}
+ 
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//判定线段是否在任意多边形内,顶点按顺时针或逆时针给出,与边界相交返回1</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">inside_polygon</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(point l1,point l2,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,point* p)</span></span>{
+	point t[N],tt;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> k=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!inside_polygon(l1,n,p)||!inside_polygon(l2,n,p))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opposite_side(l1,l2,line(p[i],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n]))&amp;&amp;opposite_side(p[i],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n],line(l1,l2)))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(dot_online_in(l1,p[i],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n]))t[k++]=l1;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(dot_online_in(l2,p[i],p[(i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)%n]))t[k++]=l2;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(dot_online_in(p[i],l1,l2))t[k++]=p[i];
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;k;i++)
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;j&lt;k;j++){
+		tt.x=(t[i].x+t[j].x)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+		tt.y=(t[i].y+t[j].y)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!inside_polygon(tt,n,p))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+}
+
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//三点重心 </span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">point <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">barycenter</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(point a,point b,point c)</span></span>{
+	line u,v;
+	u.a.x=(a.x+b.x)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+	u.a.y=(a.y+b.y)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+	u.b=c;
+	v.a.x=(a.x+c.x)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+	v.a.y=(a.y+c.y)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+	v.b=b;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> intersection(u,v);
+}
+
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//多边形重心</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">point <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">barycenter</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,point* p)</span></span>{
+	point ret,t;
+	db t1=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,t2;
+	ret.x=ret.y=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;n<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;++i)
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">fabs</span>(t2=xmult(p[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>],p[i],p[i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]))&gt;eps){
+		t=barycenter(p[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>],p[i],p[i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]);
+		ret.x+=t.x*t2;
+		ret.y+=t.y*t2;
+		t1+=t2;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">fabs</span>(t1)&gt;eps)ret.x/=t1,ret.y/=t1;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%E7%9B%B4%E7%BA%BF%E7%9A%84%E4%BA%A4%0A%E5%87%B8%E5%A4%9A%E8%BE%B9%E5%BD%A2%E7%9A%84%E5%88%A4%E5%AE%9A%0A%E7%82%B9%E5%9C%A8%E5%A4%9A%E8%BE%B9%E5%BD%A2%E5%86%85%E7%9A%84%E5%88%A4%E5%AE%9A%0A%E7%BA%BF%E6%AE%B5%E5%9C%A8%E5%A4%9A%E8%BE%B9%E5%BD%A2%E5%86%85%E7%9A%84%E5%88%A4%E5%AE%9A%0A%E5%A4%9A%E8%BE%B9%E5%BD%A2%E7%9A%84%E9%87%8D%E5%BF%83%0A%0A%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Atypedef%20double%20db%3B%0A%23define%20zero(x)%20(((x)%3E0%3F(x)%3A-(x))%3Ceps)%0A%23define%20_sign(x)%20((x)%3Eeps%3F1%3A((x)%3C-eps%3F2%3A0))%0Aconst%20int%20N%20%3D%201e3%2B5%3B%0Aconst%20int%20offset%20%3D%201e8%3B%0Aconst%20db%20eps%20%3D%201e-8%3B%20%0A%0Astruct%20point%7B%0A%09db%20x%2Cy%3B%0A%09point(db%20_x%3D0%2Cdb%20_y%3D0)%7B%0A%09%09x%3D_x%3By%3D_y%3B%0A%09%7D%20%0A%7D%3B%0Astruct%20line%7B%0A%09point%20a%2Cb%3B%0A%09line(point%20_a%3Dpoint(0%2C0)%2Cpoint%20_b%3Dpoint(0%2C0))%7B%0A%09%09a%3D_b%3Bb%3D_b%3B%0A%09%7D%20%0A%7D%3B%0A%0A%2F%2Fp0-%3Ep1%E4%B8%8Ep0-%3Ep2%E7%9A%84%E5%8F%89%E7%A7%AF%20%0Adouble%20xmult(point%20p1%2Cpoint%20p2%2Cpoint%20p0)%7B%0A%09return%20(p1.x-p0.x)*(p2.y-p0.y)-(p2.x-p0.x)*(p1.y-p0.y)%3B%0A%7D%0A%0A%2F%2F%E7%9B%B4%E7%BA%BF%E7%9A%84%E4%BA%A4%E7%82%B9%20%0Apoint%20intersection(line%20u%2Cline%20v)%7B%0A%09point%20ret%3Du.a%3B%0A%09double%20t%3D((u.a.x-v.a.x)*(v.a.y-v.b.y)-(u.a.y-v.a.y)*(v.a.x-v.b.x))%0A%09%09%09%2F((u.a.x-u.b.x)*(v.a.y-v.b.y)-(u.a.y-u.b.y)*(v.a.x-v.b.x))%3B%0A%09ret.x%2B%3D(u.b.x-u.a.x)*t%3B%0A%09ret.y%2B%3D(u.b.y-u.a.y)*t%3B%0A%09return%20ret%3B%0A%7D%0A%0A%2F%2F%E5%88%A4%E5%AE%9A%E6%98%AF%E5%90%A6%E4%B8%BA%E5%87%B8%E5%A4%9A%E8%BE%B9%E5%BD%A2%2C%E9%A1%B6%E7%82%B9%E6%8C%89%E9%A1%BA%E6%97%B6%E9%92%88%E6%88%96%E9%80%86%E6%97%B6%E9%92%88%E7%BB%99%E5%87%BA%2C%E5%85%81%E8%AE%B8%E7%9B%B8%E9%82%BB%E8%BE%B9%E5%85%B1%E7%BA%BF%0Aint%20is_convex(int%20n%2Cpoint*%20p)%7B%0A%09int%20s%5B3%5D%3D%7B1%2C1%2C1%7D%3B%0A%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)s%5B_sign(xmult(p%5B(i%2B1)%25n%5D%2Cp%5B(i%2B2)%25n%5D%2Cp%5Bi%5D))%5D%3D0%3B%0A%09return%20s%5B1%5D%7Cs%5B2%5D%3B%0A%7D%0A%20%0A%2F%2F%E5%88%A4%E7%82%B9%E5%9C%A8%E5%87%B8%E5%A4%9A%E8%BE%B9%E5%BD%A2%E5%86%85%2C%E9%A1%B6%E7%82%B9%E6%8C%89%E9%A1%BA%E6%97%B6%E9%92%88%E6%88%96%E9%80%86%E6%97%B6%E9%92%88%E7%BB%99%E5%87%BA%2C%E5%9C%A8%E5%A4%9A%E8%BE%B9%E5%BD%A2%E8%BE%B9%E4%B8%8A%E8%BF%94%E5%9B%9E2%0Aint%20inside_convex(point%20q%2Cint%20n%2Cpoint*%20p)%7B%0A%09int%20s%5B3%5D%3D%7B1%2C1%2C1%7D%3B%0A%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)s%5B_sign(xmult(p%5B(i%2B1)%25n%5D%2Cq%2Cp%5Bi%5D))%5D%3D0%3B%0A%09if(!s%5B0%5D)return%202%3B%0A%09return%20s%5B1%5D%7Cs%5B2%5D%3B%0A%7D%0A%0A%2F%2F%E5%88%A4%E6%96%AD%E7%82%B9a%2Cb%E6%98%AF%E5%90%A6%E5%9C%A8%E7%9B%B4%E7%BA%BFl%E7%9A%84%E4%B8%A4%E4%BE%A7%0Aint%20opposite_side(point%20p1%2Cpoint%20p2%2Cline%20l)%7B%0A%09return%20xmult(l.a%2Cp1%2Cl.b)*xmult(l.a%2Cp2%2Cl.b)%3C-eps%3B%0A%7D%0A%0A%2F%2F%E5%88%A4%E6%96%AD%E7%82%B9%E6%98%AF%E5%90%A6%E5%9C%A8%E7%BA%BF%E6%AE%B5%E4%B8%8A%0Ainline%20int%20dot_online_in(point%20p%2Cpoint%20l1%2Cpoint%20l2)%7B%0A%09return%20zero(xmult(p%2Cl1%2Cl2))%26%26(l1.x-p.x)*(l2.x-p.x)%3Ceps%26%26(l1.y-p.y)*(l2.y-p.y)%3Ceps%3B%0A%7D%0A%20%0A%2F%2F%E5%88%A4%E5%AE%9A%E7%82%B9%E6%98%AF%E5%90%A6%E5%9C%A8%E4%BB%BB%E6%84%8F%E5%A4%9A%E8%BE%B9%E5%BD%A2%E5%86%85%2C%E9%A1%B6%E7%82%B9%E6%8C%89%E9%A1%BA%E6%97%B6%E9%92%88%E6%88%96%E9%80%86%E6%97%B6%E9%92%88%E7%BB%99%E5%87%BA%0A%2F%2Fon_edge%E8%A1%A8%E7%A4%BA%E7%82%B9%E5%9C%A8%E5%A4%9A%E8%BE%B9%E5%BD%A2%E8%BE%B9%E4%B8%8A%E6%97%B6%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC%2Coffset%E4%B8%BA%E5%A4%9A%E8%BE%B9%E5%BD%A2%E5%9D%90%E6%A0%87%E4%B8%8A%E9%99%90%0Aint%20inside_polygon(point%20q%2Cint%20n%2Cpoint*%20p%2Cint%20on_edge%3D1)%7B%0A%09point%20q2%3B%0A%09int%20i%3D0%2Ccount%3B%0A%09while(i%3Cn)%7B%0A%09%09for(count%3Di%3D0%2Cq2.x%3Drand()%2Boffset%2Cq2.y%3Drand()%2Boffset%3Bi%3Cn%3B%2B%2Bi)%0A%09%09if(dot_online_in(q%2Cp%5Bi%5D%2Cp%5B(i%2B1)%25n%5D))return%20on_edge%3B%0A%09%09else%20if(zero(xmult(q%2Cq2%2Cp%5Bi%5D)))break%3B%0A%09%09else%20if(opposite_side(p%5Bi%5D%2Cp%5B(i%2B1)%25n%5D%2Cline(q%2Cq2))%26%26opposite_side(q%2Cq2%2Cline(p%5Bi%5D%2Cp%5B(i%2B1)%25n%5D)))count%2B%2B%3B%0A%09%7D%0A%09return%20count%261%3B%0A%7D%0A%20%0A%2F%2F%E5%88%A4%E5%AE%9A%E7%BA%BF%E6%AE%B5%E6%98%AF%E5%90%A6%E5%9C%A8%E4%BB%BB%E6%84%8F%E5%A4%9A%E8%BE%B9%E5%BD%A2%E5%86%85%2C%E9%A1%B6%E7%82%B9%E6%8C%89%E9%A1%BA%E6%97%B6%E9%92%88%E6%88%96%E9%80%86%E6%97%B6%E9%92%88%E7%BB%99%E5%87%BA%2C%E4%B8%8E%E8%BE%B9%E7%95%8C%E7%9B%B8%E4%BA%A4%E8%BF%94%E5%9B%9E1%0Aint%20inside_polygon(point%20l1%2Cpoint%20l2%2Cint%20n%2Cpoint*%20p)%7B%0A%09point%20t%5BN%5D%2Ctt%3B%0A%09int%20k%3D0%3B%0A%09if(!inside_polygon(l1%2Cn%2Cp)%7C%7C!inside_polygon(l2%2Cn%2Cp))return%200%3B%0A%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)%7B%0A%09%09if(opposite_side(l1%2Cl2%2Cline(p%5Bi%5D%2Cp%5B(i%2B1)%25n%5D))%26%26opposite_side(p%5Bi%5D%2Cp%5B(i%2B1)%25n%5D%2Cline(l1%2Cl2)))return%200%3B%0A%09%09else%20if(dot_online_in(l1%2Cp%5Bi%5D%2Cp%5B(i%2B1)%25n%5D))t%5Bk%2B%2B%5D%3Dl1%3B%0A%09%09else%20if(dot_online_in(l2%2Cp%5Bi%5D%2Cp%5B(i%2B1)%25n%5D))t%5Bk%2B%2B%5D%3Dl2%3B%0A%09%09else%20if(dot_online_in(p%5Bi%5D%2Cl1%2Cl2))t%5Bk%2B%2B%5D%3Dp%5Bi%5D%3B%0A%09%7D%0A%09for(int%20i%3D0%3Bi%3Ck%3Bi%2B%2B)%0A%09for(int%20j%3Di%2B1%3Bj%3Ck%3Bj%2B%2B)%7B%0A%09%09tt.x%3D(t%5Bi%5D.x%2Bt%5Bj%5D.x)%2F2%3B%0A%09%09tt.y%3D(t%5Bi%5D.y%2Bt%5Bj%5D.y)%2F2%3B%0A%09%09if(!inside_polygon(tt%2Cn%2Cp))return%200%3B%0A%09%7D%0A%09return%201%3B%0A%7D%0A%0A%2F%2F%E4%B8%89%E7%82%B9%E9%87%8D%E5%BF%83%20%0Apoint%20barycenter(point%20a%2Cpoint%20b%2Cpoint%20c)%7B%0A%09line%20u%2Cv%3B%0A%09u.a.x%3D(a.x%2Bb.x)%2F2%3B%0A%09u.a.y%3D(a.y%2Bb.y)%2F2%3B%0A%09u.b%3Dc%3B%0A%09v.a.x%3D(a.x%2Bc.x)%2F2%3B%0A%09v.a.y%3D(a.y%2Bc.y)%2F2%3B%0A%09v.b%3Db%3B%0A%09return%20intersection(u%2Cv)%3B%0A%7D%0A%0A%2F%2F%E5%A4%9A%E8%BE%B9%E5%BD%A2%E9%87%8D%E5%BF%83%0Apoint%20barycenter(int%20n%2Cpoint*%20p)%7B%0A%09point%20ret%2Ct%3B%0A%09db%20t1%3D0%2Ct2%3B%0A%09ret.x%3Dret.y%3D0%3B%0A%09for(int%20i%3D1%3Bi%3Cn-1%3B%2B%2Bi)%0A%09if(fabs(t2%3Dxmult(p%5B0%5D%2Cp%5Bi%5D%2Cp%5Bi%2B1%5D))%3Eeps)%7B%0A%09%09t%3Dbarycenter(p%5B0%5D%2Cp%5Bi%5D%2Cp%5Bi%2B1%5D)%3B%0A%09%09ret.x%2B%3Dt.x*t2%3B%0A%09%09ret.y%2B%3Dt.y*t2%3B%0A%09%09t1%2B%3Dt2%3B%0A%09%7D%0A%09if(fabs(t1)%3Eeps)ret.x%2F%3Dt1%2Cret.y%2F%3Dt1%3B%0A%09return%20ret%3B%0A%7D%0A%0A%60%60%60</center></span>
+</div></body></html> 

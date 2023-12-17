@@ -1,0 +1,124 @@
+<html>
+<head>
+  <title>LCT</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1649"/>
+<h1>LCT</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e5</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m,fa[N],son[N][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>],size[N],key[N],sum[N],mx[N],tag[N],rev[N];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">isroot</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> son[fa[x]][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]!=x&amp;&amp;son[fa[x]][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]!=x;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Add</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> v)</span></span>{
+	key[x]+=v;sum[x]+=v*size[x];mx[x]+=v;tag[x]+=v;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">push_up</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	size[x]=size[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]+size[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]]+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+	sum[x]=sum[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]+sum[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]]+key[x];
+	mx[x]=max(max(mx[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]],mx[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]]),key[x]);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">push_down</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(rev[x])rev[x]^=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,rev[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]^=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,rev[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]]^=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>::swap(son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>],son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(tag[x])Add(son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>],tag[x]),Add(son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>],tag[x]),tag[x]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Rotate</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	push_down(fa[x]);push_down(x);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=fa[x],z=fa[y],t=(son[y][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]==x);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!isroot(y)) son[z][son[z][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]==y]=x;
+	son[y][!t]=son[x][t];fa[son[y][!t]]=y;
+	son[x][t]=y;
+	fa[y]=x;fa[x]=z;
+	push_up(y);push_up(x);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Splay</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	push_down(x);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(!isroot(x)){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=fa[x],z=fa[y];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!isroot(y)){
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(son[z][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]==y^son[y][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]==x) Rotate(x);
+		    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> Rotate(y);
+		}
+		Rotate(x);
+	}
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Access</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;x;y=x,x=fa[x]){
+		Splay(x);
+		son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=y;
+		push_up(x);
+	} 
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Makeroot</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	Access(x);
+	Splay(x);
+	rev[x]^=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Split</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y)</span></span>{
+	Makeroot(x);
+	Access(y);
+	Splay(x);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Link</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y)</span></span>{
+	Makeroot(x);
+	fa[x]=y;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Cut</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y)</span></span>{
+	Split(x,y);
+	son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=fa[y]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">inline</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Find</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	Access(x);
+	Splay(x);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>])x=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> x;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	mx[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-0x7fffffff</span>;
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x;i&lt;=n;i++){
+		<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;x);
+		size[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;Add(i,x);tag[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,opt,x,y,z;i&lt;=m;++i){
+		<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d%d&quot;</span>,&amp;opt,&amp;x,&amp;y);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opt==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>) Link(x,y);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opt==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>) Cut(x,y);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opt==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>) Splay(x),key[x]=y,push_up(x);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opt==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">4</span>) Split(x,y),<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,mx[x]);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opt==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>) Split(x,y),<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,sum[x]);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(opt==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">6</span>) <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,Find(x)==Find(y));
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;z),Split(x,y),Add(x,z);
+	}
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Aconst%20int%20N%20%3D%201e5%2B5%3B%0A%0Aint%20n%2Cm%2Cfa%5BN%5D%2Cson%5BN%5D%5B2%5D%2Csize%5BN%5D%2Ckey%5BN%5D%2Csum%5BN%5D%2Cmx%5BN%5D%2Ctag%5BN%5D%2Crev%5BN%5D%3B%0A%0Ainline%20bool%20isroot(int%20x)%7B%0A%09return%20son%5Bfa%5Bx%5D%5D%5B0%5D!%3Dx%26%26son%5Bfa%5Bx%5D%5D%5B1%5D!%3Dx%3B%0A%7D%0A%0Ainline%20void%20Add(int%20x%2Cint%20v)%7B%0A%09key%5Bx%5D%2B%3Dv%3Bsum%5Bx%5D%2B%3Dv*size%5Bx%5D%3Bmx%5Bx%5D%2B%3Dv%3Btag%5Bx%5D%2B%3Dv%3B%0A%7D%0A%0Ainline%20void%20push_up(int%20x)%7B%0A%09size%5Bx%5D%3Dsize%5Bson%5Bx%5D%5B0%5D%5D%2Bsize%5Bson%5Bx%5D%5B1%5D%5D%2B1%3B%0A%09sum%5Bx%5D%3Dsum%5Bson%5Bx%5D%5B0%5D%5D%2Bsum%5Bson%5Bx%5D%5B1%5D%5D%2Bkey%5Bx%5D%3B%0A%09mx%5Bx%5D%3Dmax(max(mx%5Bson%5Bx%5D%5B0%5D%5D%2Cmx%5Bson%5Bx%5D%5B1%5D%5D)%2Ckey%5Bx%5D)%3B%0A%7D%0A%0Ainline%20void%20push_down(int%20x)%7B%0A%09if(rev%5Bx%5D)rev%5Bx%5D%5E%3D1%2Crev%5Bson%5Bx%5D%5B0%5D%5D%5E%3D1%2Crev%5Bson%5Bx%5D%5B1%5D%5D%5E%3D1%2Cstd%3A%3Aswap(son%5Bx%5D%5B0%5D%2Cson%5Bx%5D%5B1%5D)%3B%0A%09if(tag%5Bx%5D)Add(son%5Bx%5D%5B0%5D%2Ctag%5Bx%5D)%2CAdd(son%5Bx%5D%5B1%5D%2Ctag%5Bx%5D)%2Ctag%5Bx%5D%3D0%3B%0A%7D%0A%0Ainline%20void%20Rotate(int%20x)%7B%0A%09push_down(fa%5Bx%5D)%3Bpush_down(x)%3B%0A%09int%20y%3Dfa%5Bx%5D%2Cz%3Dfa%5By%5D%2Ct%3D(son%5By%5D%5B0%5D%3D%3Dx)%3B%0A%09if(!isroot(y))%20son%5Bz%5D%5Bson%5Bz%5D%5B1%5D%3D%3Dy%5D%3Dx%3B%0A%09son%5By%5D%5B!t%5D%3Dson%5Bx%5D%5Bt%5D%3Bfa%5Bson%5By%5D%5B!t%5D%5D%3Dy%3B%0A%09son%5Bx%5D%5Bt%5D%3Dy%3B%0A%09fa%5By%5D%3Dx%3Bfa%5Bx%5D%3Dz%3B%0A%09push_up(y)%3Bpush_up(x)%3B%0A%7D%0A%0Ainline%20void%20Splay(int%20x)%7B%0A%09push_down(x)%3B%0A%09while(!isroot(x))%7B%0A%09%09int%20y%3Dfa%5Bx%5D%2Cz%3Dfa%5By%5D%3B%0A%09%09if(!isroot(y))%7B%0A%09%09%09if(son%5Bz%5D%5B0%5D%3D%3Dy%5Eson%5By%5D%5B0%5D%3D%3Dx)%20Rotate(x)%3B%0A%09%09%20%20%20%20else%20Rotate(y)%3B%0A%09%09%7D%0A%09%09Rotate(x)%3B%0A%09%7D%0A%7D%0A%0Ainline%20void%20Access(int%20x)%7B%0A%09for(int%20y%3D0%3Bx%3By%3Dx%2Cx%3Dfa%5Bx%5D)%7B%0A%09%09Splay(x)%3B%0A%09%09son%5Bx%5D%5B1%5D%3Dy%3B%0A%09%09push_up(x)%3B%0A%09%7D%20%0A%7D%0A%0Ainline%20void%20Makeroot(int%20x)%7B%0A%09Access(x)%3B%0A%09Splay(x)%3B%0A%09rev%5Bx%5D%5E%3D1%3B%0A%7D%0A%0Ainline%20void%20Split(int%20x%2Cint%20y)%7B%0A%09Makeroot(x)%3B%0A%09Access(y)%3B%0A%09Splay(x)%3B%0A%7D%0A%0Ainline%20void%20Link(int%20x%2Cint%20y)%7B%0A%09Makeroot(x)%3B%0A%09fa%5Bx%5D%3Dy%3B%0A%7D%0A%0Ainline%20void%20Cut(int%20x%2Cint%20y)%7B%0A%09Split(x%2Cy)%3B%0A%09son%5Bx%5D%5B1%5D%3Dfa%5By%5D%3D0%3B%0A%7D%0A%0Ainline%20int%20Find(int%20x)%7B%0A%09Access(x)%3B%0A%09Splay(x)%3B%0A%09while(son%5Bx%5D%5B0%5D)x%3Dson%5Bx%5D%5B0%5D%3B%0A%09return%20x%3B%0A%7D%0A%0Aint%20main()%7B%0A%09mx%5B0%5D%3D-0x7fffffff%3B%0A%09scanf(%22%25d%25d%22%2C%26n%2C%26m)%3B%0A%09for(int%20i%3D1%2Cx%3Bi%3C%3Dn%3Bi%2B%2B)%7B%0A%09%09scanf(%22%25d%22%2C%26x)%3B%0A%09%09size%5Bi%5D%3D1%3BAdd(i%2Cx)%3Btag%5Bi%5D%3D0%3B%0A%09%7D%0A%09for(int%20i%3D1%2Copt%2Cx%2Cy%2Cz%3Bi%3C%3Dm%3B%2B%2Bi)%7B%0A%09%09scanf(%22%25d%25d%25d%22%2C%26opt%2C%26x%2C%26y)%3B%0A%09%09if(opt%3D%3D1)%20Link(x%2Cy)%3B%0A%09%09else%20if(opt%3D%3D2)%20Cut(x%2Cy)%3B%0A%09%09else%20if(opt%3D%3D3)%20Splay(x)%2Ckey%5Bx%5D%3Dy%2Cpush_up(x)%3B%0A%09%09else%20if(opt%3D%3D4)%20Split(x%2Cy)%2Cprintf(%22%25d%5Cn%22%2Cmx%5Bx%5D)%3B%0A%09%09else%20if(opt%3D%3D5)%20Split(x%2Cy)%2Cprintf(%22%25d%5Cn%22%2Csum%5Bx%5D)%3B%0A%09%09else%20if(opt%3D%3D6)%20printf(%22%25d%5Cn%22%2CFind(x)%3D%3DFind(y))%3B%0A%09%09else%20scanf(%22%25d%22%2C%26z)%2CSplit(x%2Cy)%2CAdd(x%2Cz)%3B%0A%09%7D%0A%7D%0A%60%60%60</center></span>
+</div></body></html> 

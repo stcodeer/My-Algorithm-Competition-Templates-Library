@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>康托展开与康托逆展开</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="652"/>
+<h1>康托展开与康托逆展开</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">contor</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span>&gt;&amp; permutation)</span> </span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> num = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> len = permutation.size();
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span> (<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>; i &lt; len; ++i) {
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> cnt = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>; <span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">// 在 i 之后，比 i 还小的有几个</span>
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span> (<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j = i + <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>; j &lt; len; ++j)
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span> (permutation[i] &gt; permutation[j]) ++cnt;
+        num += cnt * fact[len - i - <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+    }
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> num + <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+}
+
+<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span>&gt; revContor(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> bits, <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> num) {
+    num = num - <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>; <span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//有 num - 1 个排列比目标序列要小</span>
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span>&gt; vis(bits + <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>, <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">false</span>);
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span>&gt; permutation(bits, <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>);
+
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n, residue = num;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span> (<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>; i &lt; bits; ++i) {
+        n = residue / (fact[bits - i - <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]);
+        residue = residue % (fact[bits - i - <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]);
+
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span> (<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>; j &lt;= bits; ++j) {
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span> (!vis[j] &amp;&amp; !(n--)) {
+                vis[j] = <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">true</span>;
+                permutation[i] = j;
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+            }
+        }
+    }
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> permutation;
+}
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0Aint%20contor(const%20vector%3Cint%3E%26%20permutation)%20%7B%0A%20%20%20%20int%20num%20%3D%200%3B%0A%20%20%20%20int%20len%20%3D%20permutation.size()%3B%0A%20%20%20%20for%20(int%20i%20%3D%200%3B%20i%20%3C%20len%3B%20%2B%2Bi)%20%7B%0A%20%20%20%20%20%20%20%20int%20cnt%20%3D%200%3B%20%2F%2F%20%E5%9C%A8%20i%20%E4%B9%8B%E5%90%8E%EF%BC%8C%E6%AF%94%20i%20%E8%BF%98%E5%B0%8F%E7%9A%84%E6%9C%89%E5%87%A0%E4%B8%AA%0A%20%20%20%20%20%20%20%20for%20(int%20j%20%3D%20i%20%2B%201%3B%20j%20%3C%20len%3B%20%2B%2Bj)%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20(permutation%5Bi%5D%20%3E%20permutation%5Bj%5D)%20%2B%2Bcnt%3B%0A%20%20%20%20%20%20%20%20num%20%2B%3D%20cnt%20*%20fact%5Blen%20-%20i%20-%201%5D%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20num%20%2B%201%3B%0A%7D%0A%0Avector%3Cint%3E%20revContor(int%20bits%2C%20int%20num)%20%7B%0A%20%20%20%20num%20%3D%20num%20-%201%3B%20%2F%2F%E6%9C%89%20num%20-%201%20%E4%B8%AA%E6%8E%92%E5%88%97%E6%AF%94%E7%9B%AE%E6%A0%87%E5%BA%8F%E5%88%97%E8%A6%81%E5%B0%8F%0A%20%20%20%20vector%3Cbool%3E%20vis(bits%20%2B%201%2C%20false)%3B%0A%20%20%20%20vector%3Cint%3E%20permutation(bits%2C%20-1)%3B%0A%0A%20%20%20%20int%20n%2C%20residue%20%3D%20num%3B%0A%20%20%20%20for%20(int%20i%20%3D%200%3B%20i%20%3C%20bits%3B%20%2B%2Bi)%20%7B%0A%20%20%20%20%20%20%20%20n%20%3D%20residue%20%2F%20(fact%5Bbits%20-%20i%20-%201%5D)%3B%0A%20%20%20%20%20%20%20%20residue%20%3D%20residue%20%25%20(fact%5Bbits%20-%20i%20-%201%5D)%3B%0A%0A%20%20%20%20%20%20%20%20for%20(int%20j%20%3D%201%3B%20j%20%3C%3D%20bits%3B%20%2B%2Bj)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20(!vis%5Bj%5D%20%26%26%20!(n--))%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20vis%5Bj%5D%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20permutation%5Bi%5D%20%3D%20j%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20return%20permutation%3B%0A%7D%0A%60%60%60</center></span>
+</div></body></html> 

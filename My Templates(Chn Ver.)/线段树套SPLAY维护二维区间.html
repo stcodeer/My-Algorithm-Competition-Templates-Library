@@ -1,0 +1,212 @@
+<html>
+<head>
+  <title>线段树套SPLAY维护二维区间</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="2196"/>
+<h1>线段树套SPLAY维护二维区间</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;iostream&gt;</span></span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;cstdio&gt;</span></span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;cstring&gt;</span></span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> pd(i) (i&gt;=<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">'0'</span>&amp;&amp;i&lt;=<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">'9'</span>)</span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5e4</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> inf = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0x7fffffff</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> M = N*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">40</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m,tot,a[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> son[M][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>],fa[M],w[M],s[M],L[M],R[M],num[M],root[M];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">read</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,f=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">char</span> ch=getchar();
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(!pd(ch))ch==<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">'-'</span>?f=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>:<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,ch=getchar();
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(pd(ch))x=(x&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>)+(x&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)+ch-<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">'0'</span>,ch=getchar();
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> x*f;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">up</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	s[x]=s[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]+s[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]]+num[x];
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">rotate</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=fa[x],z=fa[y],t=son[y][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]==x;
+	fa[y]=x;fa[x]=z;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(z)son[z][son[z][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]==y]=x;
+	son[y][!t]=son[x][t];fa[son[x][t]]=y;
+	son[x][t]=y;
+	up(y);up(x);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">splay</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> f)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(fa[x]!=f){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=fa[x],z=fa[y];
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(z!=f){
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(son[y][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]==x^son[z][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]==y)rotate(x);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> rotate(y);
+        }
+        rotate(x);
+    }
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!f)root[i]=x;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">insert</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> &amp;x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> f,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!x){
+		x=++tot;fa[x]=f;
+		son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+		w[x]=val;s[x]=num[x]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		splay(i,x,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(w[x]==val){
+		s[x]++;num[x]++;
+		splay(i,x,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+	}
+	insert(i,son[x][val&gt;w[x]],x,val);
+	up(x);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">get</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=root[i];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(x&amp;&amp;w[x]!=val)x=son[x][val&gt;w[x]];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> x;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">delet</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x)</span></span>{
+	x=get(i,x);splay(i,x,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(num[x]&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+		num[x]--;s[x]--;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]*son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>)root[i]=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]+son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span>{
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(son[y][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>])y=son[y][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>];
+        splay(i,y,x);
+        fa[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]=y;
+        son[y][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>];
+        root[i]=y;
+        son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    }
+    fa[root[i]]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    up(root[i]);
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">build</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> now,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> r,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+	L[now]=l;R[now]=r;
+	insert(now,root[now],<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(l==r)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=mid)build(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>,l,mid,x,val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> build(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,mid+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,r,x,val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">rk</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=root[i],ret=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(x){
+    	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(w[x]&lt;val)ret+=s[son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]+num[x],x=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+    	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> x=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>];
+	}
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">getrk</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> now,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> k)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l=L[now],r=R[now];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=l&amp;&amp;r&lt;=y)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> rk(now,k);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> ret=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=mid)ret+=getrk(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>,x,y,k);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(y&gt;mid)ret+=getrk(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y,k);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">kth</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> k)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,r=inf;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(l!=r){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(getrk(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y,mid)+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>&lt;=k)l=mid;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> r=mid<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> l;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">change</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> now,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> __val)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l=L[now],r=R[now];
+	delet(now,__val);
+	insert(now,root[now],<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(l==r)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=mid)change(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>,x,val,__val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> change(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,val,__val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">pre</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=root[i],ret=-inf;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(x){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(w[x]&gt;=val)x=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> ret=max(ret,w[x]),x=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ne</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=root[i],ret=inf;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(x){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(w[x]&gt;val)ret=min(ret,w[x]),x=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> x=son[x][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">getpre</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> now,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l=L[now],r=R[now];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=l&amp;&amp;r&lt;=y)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> pre(now,val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,ret=-inf;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=mid)ret=max(ret,getpre(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>,x,y,val));
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(y&gt;mid)ret=max(ret,getpre(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y,val));
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">getne</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> now,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> y,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> val)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l=L[now],r=R[now];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=l&amp;&amp;r&lt;=y)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ne(now,val);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mid=l+r&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,ret=inf;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;=mid)ret=min(ret,getne(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>,x,y,val));
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(y&gt;mid)ret=min(ret,getne(now*<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y,val));
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ret;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	n=read();m=read();
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i){
+		a[i]=read();
+		build(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n,i,a[i]);
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,op,x,y,k,pos;i&lt;=m;++i){
+		op=read();
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">switch</span>(op){
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">case</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>:x=read();y=read();k=read();<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,getrk(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y,k)+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">case</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>:x=read();y=read();k=read();<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,kth(x,y,k));<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">case</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>:pos=read();k=read();change(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,pos,k,a[pos]);a[pos]=k;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">case</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">4</span>:x=read();y=read();k=read();<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,getpre(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y,k));<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">case</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>:x=read();y=read();k=read();<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,getne(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x,y,k));<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+		}
+	}
+}
+
+
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Ciostream%3E%0A%23include%3Ccstdio%3E%0A%23include%3Ccstring%3E%0A%23define%20pd(i)%20(i%3E%3D'0'%26%26i%3C%3D'9')%0Ausing%20namespace%20std%3B%0Aconst%20int%20N%20%3D%205e4%2B1%3B%0Aconst%20int%20inf%20%3D%200x7fffffff%3B%0Aconst%20int%20M%20%3D%20N*40%3B%0A%0Aint%20n%2Cm%2Ctot%2Ca%5BN%5D%3B%0Aint%20son%5BM%5D%5B2%5D%2Cfa%5BM%5D%2Cw%5BM%5D%2Cs%5BM%5D%2CL%5BM%5D%2CR%5BM%5D%2Cnum%5BM%5D%2Croot%5BM%5D%3B%0A%0Aint%20read()%7B%0A%20%20%20%20int%20x%3D0%2Cf%3D1%3Bchar%20ch%3Dgetchar()%3B%0A%20%20%20%20while(!pd(ch))ch%3D%3D'-'%3Ff%3D-1%3A0%2Cch%3Dgetchar()%3B%0A%20%20%20%20while(pd(ch))x%3D(x%3C%3C3)%2B(x%3C%3C1)%2Bch-'0'%2Cch%3Dgetchar()%3B%0A%20%20%20%20return%20x*f%3B%0A%7D%0A%0Avoid%20up(int%20x)%7B%0A%09s%5Bx%5D%3Ds%5Bson%5Bx%5D%5B0%5D%5D%2Bs%5Bson%5Bx%5D%5B1%5D%5D%2Bnum%5Bx%5D%3B%0A%7D%0A%0Avoid%20rotate(int%20x)%7B%0A%09int%20y%3Dfa%5Bx%5D%2Cz%3Dfa%5By%5D%2Ct%3Dson%5By%5D%5B0%5D%3D%3Dx%3B%0A%09fa%5By%5D%3Dx%3Bfa%5Bx%5D%3Dz%3B%0A%09if(z)son%5Bz%5D%5Bson%5Bz%5D%5B1%5D%3D%3Dy%5D%3Dx%3B%0A%09son%5By%5D%5B!t%5D%3Dson%5Bx%5D%5Bt%5D%3Bfa%5Bson%5Bx%5D%5Bt%5D%5D%3Dy%3B%0A%09son%5Bx%5D%5Bt%5D%3Dy%3B%0A%09up(y)%3Bup(x)%3B%0A%7D%0A%0Avoid%20splay(int%20i%2Cint%20x%2Cint%20f)%7B%0A%20%20%20%20while(fa%5Bx%5D!%3Df)%7B%0A%20%20%20%20%20%20%20%20int%20y%3Dfa%5Bx%5D%2Cz%3Dfa%5By%5D%3B%0A%20%20%20%20%20%20%20%20if(z!%3Df)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(son%5By%5D%5B0%5D%3D%3Dx%5Eson%5Bz%5D%5B0%5D%3D%3Dy)rotate(x)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20rotate(y)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20rotate(x)%3B%0A%20%20%20%20%7D%0A%20%20%20%20if(!f)root%5Bi%5D%3Dx%3B%0A%7D%0A%0Avoid%20insert(int%20i%2Cint%20%26x%2Cint%20f%2Cint%20val)%7B%0A%09if(!x)%7B%0A%09%09x%3D%2B%2Btot%3Bfa%5Bx%5D%3Df%3B%0A%09%09son%5Bx%5D%5B0%5D%3Dson%5Bx%5D%5B1%5D%3D0%3B%0A%09%09w%5Bx%5D%3Dval%3Bs%5Bx%5D%3Dnum%5Bx%5D%3D1%3B%0A%09%09splay(i%2Cx%2C0)%3B%0A%09%09return%3B%0A%09%7D%0A%09if(w%5Bx%5D%3D%3Dval)%7B%0A%09%09s%5Bx%5D%2B%2B%3Bnum%5Bx%5D%2B%2B%3B%0A%09%09splay(i%2Cx%2C0)%3B%0A%09%09return%3B%0A%09%7D%0A%09insert(i%2Cson%5Bx%5D%5Bval%3Ew%5Bx%5D%5D%2Cx%2Cval)%3B%0A%09up(x)%3B%0A%7D%0A%0Aint%20get(int%20i%2Cint%20val)%7B%0A%09int%20x%3Droot%5Bi%5D%3B%0A%09while(x%26%26w%5Bx%5D!%3Dval)x%3Dson%5Bx%5D%5Bval%3Ew%5Bx%5D%5D%3B%0A%09return%20x%3B%0A%7D%0A%0Avoid%20delet(int%20i%2Cint%20x)%7B%0A%09x%3Dget(i%2Cx)%3Bsplay(i%2Cx%2C0)%3B%0A%09if(num%5Bx%5D%3E1)%7B%0A%09%09num%5Bx%5D--%3Bs%5Bx%5D--%3B%0A%09%09return%3B%0A%09%7D%0A%09if(son%5Bx%5D%5B0%5D*son%5Bx%5D%5B1%5D%3D%3D0)root%5Bi%5D%3Dson%5Bx%5D%5B0%5D%2Bson%5Bx%5D%5B1%5D%3B%0A%20%20%20%20else%7B%0A%20%20%20%20%20%20%20%20int%20y%3Dson%5Bx%5D%5B1%5D%3Bwhile(son%5By%5D%5B0%5D)y%3Dson%5By%5D%5B0%5D%3B%0A%20%20%20%20%20%20%20%20splay(i%2Cy%2Cx)%3B%0A%20%20%20%20%20%20%20%20fa%5Bson%5Bx%5D%5B0%5D%5D%3Dy%3B%0A%20%20%20%20%20%20%20%20son%5By%5D%5B0%5D%3Dson%5Bx%5D%5B0%5D%3B%0A%20%20%20%20%20%20%20%20root%5Bi%5D%3Dy%3B%0A%20%20%20%20%20%20%20%20son%5Bx%5D%5B0%5D%3Dson%5Bx%5D%5B1%5D%3D0%3B%0A%20%20%20%20%7D%0A%20%20%20%20fa%5Broot%5Bi%5D%5D%3D0%3B%0A%20%20%20%20up(root%5Bi%5D)%3B%0A%7D%0A%0Avoid%20build(int%20now%2Cint%20l%2Cint%20r%2Cint%20x%2Cint%20val)%7B%0A%09L%5Bnow%5D%3Dl%3BR%5Bnow%5D%3Dr%3B%0A%09insert(now%2Croot%5Bnow%5D%2C0%2Cval)%3B%0A%09if(l%3D%3Dr)return%3B%0A%09int%20mid%3Dl%2Br%3E%3E1%3B%0A%09if(x%3C%3Dmid)build(now*2%2Cl%2Cmid%2Cx%2Cval)%3B%0A%09else%20build(now*2%2B1%2Cmid%2B1%2Cr%2Cx%2Cval)%3B%0A%09return%3B%0A%7D%0A%0Aint%20rk(int%20i%2Cint%20val)%7B%0A%20%20%20%20int%20x%3Droot%5Bi%5D%2Cret%3D0%3B%0A%20%20%20%20while(x)%7B%0A%20%20%20%20%09if(w%5Bx%5D%3Cval)ret%2B%3Ds%5Bson%5Bx%5D%5B0%5D%5D%2Bnum%5Bx%5D%2Cx%3Dson%5Bx%5D%5B1%5D%3B%0A%20%20%20%20%09else%20x%3Dson%5Bx%5D%5B0%5D%3B%0A%09%7D%0A%20%20%20%20return%20ret%3B%0A%7D%0A%0Aint%20getrk(int%20now%2Cint%20x%2Cint%20y%2Cint%20k)%7B%0A%09int%20l%3DL%5Bnow%5D%2Cr%3DR%5Bnow%5D%3B%0A%09if(x%3C%3Dl%26%26r%3C%3Dy)return%20rk(now%2Ck)%3B%0A%09int%20mid%3Dl%2Br%3E%3E1%3Bint%20ret%3D0%3B%0A%09if(x%3C%3Dmid)ret%2B%3Dgetrk(now*2%2Cx%2Cy%2Ck)%3B%0A%09if(y%3Emid)ret%2B%3Dgetrk(now*2%2B1%2Cx%2Cy%2Ck)%3B%0A%09return%20ret%3B%0A%7D%0A%0Aint%20kth(int%20x%2Cint%20y%2Cint%20k)%7B%0A%09int%20l%3D0%2Cr%3Dinf%3B%0A%09while(l!%3Dr)%7B%0A%09%09int%20mid%3Dl%2Br%2B1%3E%3E1%3B%0A%09%09if(getrk(1%2Cx%2Cy%2Cmid)%2B1%3C%3Dk)l%3Dmid%3B%0A%09%09else%20r%3Dmid-1%3B%0A%09%7D%0A%09return%20l%3B%0A%7D%0A%0Avoid%20change(int%20now%2Cint%20x%2Cint%20val%2Cint%20__val)%7B%0A%09int%20l%3DL%5Bnow%5D%2Cr%3DR%5Bnow%5D%3B%0A%09delet(now%2C__val)%3B%0A%09insert(now%2Croot%5Bnow%5D%2C0%2Cval)%3B%0A%09if(l%3D%3Dr)return%3B%0A%09int%20mid%3Dl%2Br%3E%3E1%3B%0A%09if(x%3C%3Dmid)change(now*2%2Cx%2Cval%2C__val)%3B%0A%09else%20change(now*2%2B1%2Cx%2Cval%2C__val)%3B%0A%09return%3B%0A%7D%0A%0Aint%20pre(int%20i%2Cint%20val)%7B%0A%09int%20x%3Droot%5Bi%5D%2Cret%3D-inf%3B%0A%09while(x)%7B%0A%09%09if(w%5Bx%5D%3E%3Dval)x%3Dson%5Bx%5D%5B0%5D%3B%0A%09%09else%20ret%3Dmax(ret%2Cw%5Bx%5D)%2Cx%3Dson%5Bx%5D%5B1%5D%3B%0A%09%7D%0A%09return%20ret%3B%0A%7D%0A%0Aint%20ne(int%20i%2Cint%20val)%7B%0A%09int%20x%3Droot%5Bi%5D%2Cret%3Dinf%3B%0A%09while(x)%7B%0A%09%09if(w%5Bx%5D%3Eval)ret%3Dmin(ret%2Cw%5Bx%5D)%2Cx%3Dson%5Bx%5D%5B0%5D%3B%0A%09%09else%20x%3Dson%5Bx%5D%5B1%5D%3B%0A%09%7D%0A%09return%20ret%3B%0A%7D%0A%0Aint%20getpre(int%20now%2Cint%20x%2Cint%20y%2Cint%20val)%7B%0A%09int%20l%3DL%5Bnow%5D%2Cr%3DR%5Bnow%5D%3B%0A%09if(x%3C%3Dl%26%26r%3C%3Dy)return%20pre(now%2Cval)%3B%0A%09int%20mid%3Dl%2Br%3E%3E1%2Cret%3D-inf%3B%0A%09if(x%3C%3Dmid)ret%3Dmax(ret%2Cgetpre(now*2%2Cx%2Cy%2Cval))%3B%0A%09if(y%3Emid)ret%3Dmax(ret%2Cgetpre(now*2%2B1%2Cx%2Cy%2Cval))%3B%0A%09return%20ret%3B%0A%7D%0A%0Aint%20getne(int%20now%2Cint%20x%2Cint%20y%2Cint%20val)%7B%0A%09int%20l%3DL%5Bnow%5D%2Cr%3DR%5Bnow%5D%3B%0A%09if(x%3C%3Dl%26%26r%3C%3Dy)return%20ne(now%2Cval)%3B%0A%09int%20mid%3Dl%2Br%3E%3E1%2Cret%3Dinf%3B%0A%09if(x%3C%3Dmid)ret%3Dmin(ret%2Cgetne(now*2%2Cx%2Cy%2Cval))%3B%0A%09if(y%3Emid)ret%3Dmin(ret%2Cgetne(now*2%2B1%2Cx%2Cy%2Cval))%3B%0A%09return%20ret%3B%0A%7D%0A%0Aint%20main()%7B%0A%09n%3Dread()%3Bm%3Dread()%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)%7B%0A%09%09a%5Bi%5D%3Dread()%3B%0A%09%09build(1%2C1%2Cn%2Ci%2Ca%5Bi%5D)%3B%0A%09%7D%0A%09for(int%20i%3D1%2Cop%2Cx%2Cy%2Ck%2Cpos%3Bi%3C%3Dm%3B%2B%2Bi)%7B%0A%09%09op%3Dread()%3B%0A%09%09switch(op)%7B%0A%09%09%09case%201%3Ax%3Dread()%3By%3Dread()%3Bk%3Dread()%3Bprintf(%22%25d%5Cn%22%2Cgetrk(1%2Cx%2Cy%2Ck)%2B1)%3Bbreak%3B%0A%09%09%09case%202%3Ax%3Dread()%3By%3Dread()%3Bk%3Dread()%3Bprintf(%22%25d%5Cn%22%2Ckth(x%2Cy%2Ck))%3Bbreak%3B%0A%09%09%09case%203%3Apos%3Dread()%3Bk%3Dread()%3Bchange(1%2Cpos%2Ck%2Ca%5Bpos%5D)%3Ba%5Bpos%5D%3Dk%3Bbreak%3B%0A%09%09%09case%204%3Ax%3Dread()%3By%3Dread()%3Bk%3Dread()%3Bprintf(%22%25d%5Cn%22%2Cgetpre(1%2Cx%2Cy%2Ck))%3Bbreak%3B%0A%09%09%09case%205%3Ax%3Dread()%3By%3Dread()%3Bk%3Dread()%3Bprintf(%22%25d%5Cn%22%2Cgetne(1%2Cx%2Cy%2Ck))%3Bbreak%3B%0A%09%09%7D%0A%09%7D%0A%7D%0A%0A%0A%0A%60%60%60</center></span>
+</div></body></html> 

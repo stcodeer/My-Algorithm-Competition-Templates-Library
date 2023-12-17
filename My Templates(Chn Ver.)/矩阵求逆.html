@@ -1,0 +1,55 @@
+<html>
+<head>
+  <title>矩阵求逆</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1644"/>
+<h1>矩阵求逆</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">double</span> db;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2e2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m,H,h[N],d[N];
+<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span>&gt;g[N];
+db a[N][N],c[N][N];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">gauss</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)c[i][i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l=i;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=i;j&lt;=n;++j)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">abs</span>(a[j][i])&gt;<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">abs</span>(a[l][i]))l=j;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;j&lt;=n;++j)swap(a[l][j],a[i][j]),swap(c[l][j],c[i][j]);
+		db p=a[i][i];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;j&lt;=n;++j)a[i][j]/=p,c[i][j]/=p;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;j&lt;=n;++j)
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(i!=j){
+			p=a[j][i];
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> k=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;k&lt;=n;++k)a[j][k]-=p*a[i][k],c[j][k]-=p*c[i][k];
+		}
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+}
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;n);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;j&lt;=n;++j)
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">cin</span>&gt;&gt;a[i][j];
+	gauss(n);
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Atypedef%20double%20db%3B%0Aconst%20int%20N%20%3D%202e2%2B1%3B%0A%0Aint%20n%2Cm%2CH%2Ch%5BN%5D%2Cd%5BN%5D%3B%0Avector%3Cint%3Eg%5BN%5D%3B%0Adb%20a%5BN%5D%5BN%5D%2Cc%5BN%5D%5BN%5D%3B%0A%0Avoid%20gauss(int%20n)%7B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)c%5Bi%5D%5Bi%5D%3D1%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)%7B%0A%09%09int%20l%3Di%3B%0A%09%09for(int%20j%3Di%3Bj%3C%3Dn%3B%2B%2Bj)if(abs(a%5Bj%5D%5Bi%5D)%3Eabs(a%5Bl%5D%5Bi%5D))l%3Dj%3B%0A%09%09for(int%20j%3D1%3Bj%3C%3Dn%3B%2B%2Bj)swap(a%5Bl%5D%5Bj%5D%2Ca%5Bi%5D%5Bj%5D)%2Cswap(c%5Bl%5D%5Bj%5D%2Cc%5Bi%5D%5Bj%5D)%3B%0A%09%09db%20p%3Da%5Bi%5D%5Bi%5D%3B%0A%09%09for(int%20j%3D1%3Bj%3C%3Dn%3B%2B%2Bj)a%5Bi%5D%5Bj%5D%2F%3Dp%2Cc%5Bi%5D%5Bj%5D%2F%3Dp%3B%0A%09%09for(int%20j%3D1%3Bj%3C%3Dn%3B%2B%2Bj)%0A%09%09if(i!%3Dj)%7B%0A%09%09%09p%3Da%5Bj%5D%5Bi%5D%3B%0A%09%09%09for(int%20k%3D1%3Bk%3C%3Dn%3B%2B%2Bk)a%5Bj%5D%5Bk%5D-%3Dp*a%5Bi%5D%5Bk%5D%2Cc%5Bj%5D%5Bk%5D-%3Dp*c%5Bi%5D%5Bk%5D%3B%0A%09%09%7D%0A%09%7D%0A%09return%3B%0A%7D%0Aint%20main()%7B%0A%09scanf(%22%25d%22%2C%26n)%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)%0A%09for(int%20j%3D1%3Bj%3C%3Dn%3B%2B%2Bj)%0A%09cin%3E%3Ea%5Bi%5D%5Bj%5D%3B%0A%09gauss(n)%3B%0A%7D%0A%0A%60%60%60</center></span>
+</div></body></html> 

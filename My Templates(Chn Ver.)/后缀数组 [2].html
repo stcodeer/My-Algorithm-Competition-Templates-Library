@@ -1,0 +1,73 @@
+<html>
+<head>
+  <title>后缀数组</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1620"/>
+<h1>后缀数组</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e5</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> sa[N],tong[N],wa[N],wb[N],wv[N],rk[N],h[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">char</span> s[N];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">cmp</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> *r,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> a,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> b,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> l)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> r[a]==r[b]&amp;&amp;r[a+l]==r[b+l];
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">da</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> m)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,j,p,*x=wa,*y=wb;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;m;++i)tong[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)tong[x[i]=s[i]]++;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;m;++i)tong[i]+=tong[i<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=n<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;i&gt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;--i)sa[--tong[x[i]]]=i;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,p=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;p&lt;n;j&lt;&lt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,m=p){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(p=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,i=n-j;i&lt;n;++i)y[p++]=i;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(sa[i]&gt;=j)y[p++]=sa[i]-j;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)wv[i]=x[y[i]];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;m;++i)tong[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)tong[wv[i]]++;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;m;++i)tong[i]+=tong[i<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=n<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;i&gt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;--i)sa[--tong[wv[i]]]=y[i];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(swap(x,y),p=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x[sa[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;n;++i)
+		x[sa[i]]=cmp(y,sa[i<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>],sa[i],j)?p<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>:p++;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">calh</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,j,k=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;i++)rk[sa[i]]=i;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;h[rk[i++]]=k)
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(k?k--:<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,j=sa[rk[i]<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>];s[i+k]==s[j+k];k++);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%s&quot;</span>,s);
+	n=<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">strlen</span>(s);
+	da(n+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">255</span>);
+	calh(n);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d &quot;</span>,sa[i]+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;\n&quot;</span>);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d &quot;</span>,rk[i]);
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;\n&quot;</span>);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;i&lt;=n;++i)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d &quot;</span>,h[i]);
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Aconst%20int%20N%20%3D%201e5%2B5%3B%0A%0Aint%20n%3B%0Aint%20sa%5BN%5D%2Ctong%5BN%5D%2Cwa%5BN%5D%2Cwb%5BN%5D%2Cwv%5BN%5D%2Crk%5BN%5D%2Ch%5BN%5D%3B%0Achar%20s%5BN%5D%3B%0A%0Aint%20cmp(int%20*r%2Cint%20a%2Cint%20b%2Cint%20l)%7B%0A%09return%20r%5Ba%5D%3D%3Dr%5Bb%5D%26%26r%5Ba%2Bl%5D%3D%3Dr%5Bb%2Bl%5D%3B%0A%7D%0A%0Avoid%20da(int%20n%2Cint%20m)%7B%0A%09int%20i%2Cj%2Cp%2C*x%3Dwa%2C*y%3Dwb%3B%0A%09for(i%3D0%3Bi%3Cm%3B%2B%2Bi)tong%5Bi%5D%3D0%3B%0A%09for(i%3D0%3Bi%3Cn%3B%2B%2Bi)tong%5Bx%5Bi%5D%3Ds%5Bi%5D%5D%2B%2B%3B%0A%09for(i%3D1%3Bi%3Cm%3B%2B%2Bi)tong%5Bi%5D%2B%3Dtong%5Bi-1%5D%3B%0A%09for(i%3Dn-1%3Bi%3E%3D0%3B--i)sa%5B--tong%5Bx%5Bi%5D%5D%5D%3Di%3B%0A%09for(j%3D1%2Cp%3D1%3Bp%3Cn%3Bj%3C%3C%3D1%2Cm%3Dp)%7B%0A%09%09for(p%3D0%2Ci%3Dn-j%3Bi%3Cn%3B%2B%2Bi)y%5Bp%2B%2B%5D%3Di%3B%0A%09%09for(i%3D0%3Bi%3Cn%3B%2B%2Bi)if(sa%5Bi%5D%3E%3Dj)y%5Bp%2B%2B%5D%3Dsa%5Bi%5D-j%3B%0A%09%09for(i%3D0%3Bi%3Cn%3B%2B%2Bi)wv%5Bi%5D%3Dx%5By%5Bi%5D%5D%3B%0A%09%09for(i%3D0%3Bi%3Cm%3B%2B%2Bi)tong%5Bi%5D%3D0%3B%0A%09%09for(i%3D0%3Bi%3Cn%3B%2B%2Bi)tong%5Bwv%5Bi%5D%5D%2B%2B%3B%0A%09%09for(i%3D1%3Bi%3Cm%3B%2B%2Bi)tong%5Bi%5D%2B%3Dtong%5Bi-1%5D%3B%0A%09%09for(i%3Dn-1%3Bi%3E%3D0%3B--i)sa%5B--tong%5Bwv%5Bi%5D%5D%5D%3Dy%5Bi%5D%3B%0A%09%09for(swap(x%2Cy)%2Cp%3D1%2Cx%5Bsa%5B0%5D%5D%3D0%2Ci%3D1%3Bi%3Cn%3B%2B%2Bi)%0A%09%09x%5Bsa%5Bi%5D%5D%3Dcmp(y%2Csa%5Bi-1%5D%2Csa%5Bi%5D%2Cj)%3Fp-1%3Ap%2B%2B%3B%0A%09%7D%0A%09return%3B%0A%7D%0A%0Avoid%20calh(int%20n)%7B%0A%09int%20i%2Cj%2Ck%3D0%3B%0A%09for(i%3D1%3Bi%3C%3Dn%3Bi%2B%2B)rk%5Bsa%5Bi%5D%5D%3Di%3B%0A%09for(i%3D0%3Bi%3Cn%3Bh%5Brk%5Bi%2B%2B%5D%5D%3Dk)%0A%09for(k%3Fk--%3A0%2Cj%3Dsa%5Brk%5Bi%5D-1%5D%3Bs%5Bi%2Bk%5D%3D%3Ds%5Bj%2Bk%5D%3Bk%2B%2B)%3B%0A%09return%3B%0A%7D%0A%0Aint%20main()%7B%0A%09scanf(%22%25s%22%2Cs)%3B%0A%09n%3Dstrlen(s)%3B%0A%09da(n%2B1%2C255)%3B%0A%09calh(n)%3B%0A%09for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)printf(%22%25d%20%22%2Csa%5Bi%5D%2B1)%3B%0A%09printf(%22%5Cn%22)%3B%0A%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)printf(%22%25d%20%22%2Crk%5Bi%5D)%3B%0A%09printf(%22%5Cn%22)%3B%0A%09for(int%20i%3D2%3Bi%3C%3Dn%3B%2B%2Bi)printf(%22%25d%20%22%2Ch%5Bi%5D)%3B%0A%7D%0A%0A%60%60%60</center></span>
+</div></body></html> 

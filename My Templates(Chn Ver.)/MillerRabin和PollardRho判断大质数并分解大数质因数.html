@@ -1,0 +1,118 @@
+<html>
+<head>
+  <title>MillerRabin和PollardRho判断大质数并分解大数质因数</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="815"/>
+<h1>MillerRabin和PollardRho判断大质数并分解大数质因数</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> Rand(x) (1ll*rand()*rand()%(x)+1)</span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> __int128 ll;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> Miller_Rabin{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">12</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll p[N]={<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">7</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">11</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">13</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">17</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">19</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">61</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2333</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">4567</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">24251</span>};
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ll <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">qpow</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(ll a,ll b,ll p)</span></span>{
+		ll ans=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(;b;a=a*a%p,b&gt;&gt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(b&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+			ans=ans*a%p;
+		}
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ans;
+	}
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">check</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(ll x,ll p)</span></span>{
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x%p==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>||qpow(p%x,x<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>,x)^<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">true</span>;
+		ll t,k=x<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>((k^<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+			t=qpow(p%x,k&gt;&gt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,x);
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(t^<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>&amp;&amp;t^x<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">true</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!(t^x<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">false</span>;
+		}
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">false</span>;
+	}
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">miller_rabin</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(ll x)</span></span>{
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">false</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;N;++i){
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x==p[i])<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">true</span>;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(check(x,p[i]))<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">false</span>;
+		}
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">true</span>;
+	}
+}
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> Pollard_Rho{
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span>&gt; ans;<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//注意存到ans里的质因子都需要是long long范围</span>
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ll <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">gcd</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll a,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll b)</span></span>{
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> b?gcd(b,a%b):a;
+	}
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ll <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">mul</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll y,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll X)</span></span>{
+		ll k=(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1.0L</span>*x*y)/(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1.0L</span>*X)<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;
+		ll t=x*y-k*X;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(t&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>)t+=X;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> t;
+	}
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ll <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">pollard_rho</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll x,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> ll y)</span></span>{
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> t=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,k=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		ll v0=Rand(x<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>),v=v0,d,s=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+			v=(mul(v,v,x)+y)%x;
+			s=mul(s,<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">abs</span>(v-v0),x);
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!(v^v0)||!s)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> x;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(++t==k){
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>((d=gcd(s,x))^<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> d;
+				v0=v;
+				k&lt;&lt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+			}
+		}
+	}
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">Resolve</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(ll x)</span></span>{
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(x==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(Miller_Rabin::miller_rabin(x)){
+			ans.push_back(x);
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span>;
+		}
+		ll y=x;
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>((y=pollard_rho(x,Rand(x)))==x);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(!(x%y))x/=y;
+		Resolve(x);
+		Resolve(y);
+	}
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">signed</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	srand(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">19260817</span>);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> T;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> x,res;
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;T);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(T--){
+		<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%lld&quot;</span>,&amp;x);
+		Pollard_Rho::ans.clear();
+		Pollard_Rho::Resolve(x);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;Pollard_Rho::ans.size();++i){
+			<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%lld &quot;</span>,Pollard_Rho::ans[i]);
+		}
+		<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;\n&quot;</span>);
+	}
+}
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0A%23define%20Rand(x)%20(1ll*rand()*rand()%25(x)%2B1)%0Ausing%20namespace%20std%3B%0Atypedef%20__int128%20ll%3B%0A%0Anamespace%20Miller_Rabin%7B%0A%09const%20int%20N%20%3D%2012%3B%0A%09const%20ll%20p%5BN%5D%3D%7B2%2C3%2C5%2C7%2C11%2C13%2C17%2C19%2C61%2C2333%2C4567%2C24251%7D%3B%0A%09%0A%09ll%20qpow(ll%20a%2Cll%20b%2Cll%20p)%7B%0A%09%09ll%20ans%3D1%3B%0A%09%09for(%3Bb%3Ba%3Da*a%25p%2Cb%3E%3E%3D1)%0A%09%09if(b%261)%7B%0A%09%09%09ans%3Dans*a%25p%3B%0A%09%09%7D%0A%09%09return%20ans%3B%0A%09%7D%0A%09%0A%09bool%20check(ll%20x%2Cll%20p)%7B%0A%09%09if(x%25p%3D%3D0%7C%7Cqpow(p%25x%2Cx-1%2Cx)%5E1)return%20true%3B%0A%09%09ll%20t%2Ck%3Dx-1%3B%0A%09%09while((k%5E1)%261)%7B%0A%09%09%09t%3Dqpow(p%25x%2Ck%3E%3E%3D1%2Cx)%3B%0A%09%09%09if(t%5E1%26%26t%5Ex-1)return%20true%3B%0A%09%09%09if(!(t%5Ex-1))return%20false%3B%0A%09%09%7D%0A%09%09return%20false%3B%0A%09%7D%0A%09%0A%09bool%20miller_rabin(ll%20x)%7B%0A%09%09if(x%3C2)return%20false%3B%0A%09%09for(int%20i%3D0%3Bi%3CN%3B%2B%2Bi)%7B%0A%09%09%09if(x%3D%3Dp%5Bi%5D)return%20true%3B%0A%09%09%09if(check(x%2Cp%5Bi%5D))return%20false%3B%0A%09%09%7D%0A%09%09return%20true%3B%0A%09%7D%0A%7D%0A%0Anamespace%20Pollard_Rho%7B%0A%09vector%3Clong%20long%3E%20ans%3B%2F%2F%E6%B3%A8%E6%84%8F%E5%AD%98%E5%88%B0ans%E9%87%8C%E7%9A%84%E8%B4%A8%E5%9B%A0%E5%AD%90%E9%83%BD%E9%9C%80%E8%A6%81%E6%98%AFlong%20long%E8%8C%83%E5%9B%B4%0A%09%0A%09ll%20gcd(const%20ll%20a%2Cconst%20ll%20b)%7B%0A%09%09return%20b%3Fgcd(b%2Ca%25b)%3Aa%3B%0A%09%7D%0A%09%0A%09ll%20mul(const%20ll%20x%2Cconst%20ll%20y%2Cconst%20ll%20X)%7B%0A%09%09ll%20k%3D(1.0L*x*y)%2F(1.0L*X)-1%3B%0A%09%09ll%20t%3Dx*y-k*X%3B%0A%09%09while(t%3C0)t%2B%3DX%3B%0A%09%09return%20t%3B%0A%09%7D%0A%09%0A%09ll%20pollard_rho(const%20ll%20x%2Cconst%20ll%20y)%7B%0A%09%09int%20t%3D0%2Ck%3D1%3B%0A%09%09ll%20v0%3DRand(x-1)%2Cv%3Dv0%2Cd%2Cs%3D1%3B%0A%09%09while(1)%7B%0A%09%09%09v%3D(mul(v%2Cv%2Cx)%2By)%25x%3B%0A%09%09%09s%3Dmul(s%2Cabs(v-v0)%2Cx)%3B%0A%09%09%09if(!(v%5Ev0)%7C%7C!s)return%20x%3B%0A%09%09%09if(%2B%2Bt%3D%3Dk)%7B%0A%09%09%09%09if((d%3Dgcd(s%2Cx))%5E1)return%20d%3B%0A%09%09%09%09v0%3Dv%3B%0A%09%09%09%09k%3C%3C%3D1%3B%0A%09%09%09%7D%0A%09%09%7D%0A%09%7D%0A%09%0A%09void%20Resolve(ll%20x)%7B%0A%09%09if(x%3D%3D1)return%3B%0A%09%09if(Miller_Rabin%3A%3Amiller_rabin(x))%7B%0A%09%09%09ans.push_back(x)%3B%0A%09%09%09return%3B%0A%09%09%7D%0A%09%09ll%20y%3Dx%3B%0A%09%09while((y%3Dpollard_rho(x%2CRand(x)))%3D%3Dx)%3B%0A%09%09while(!(x%25y))x%2F%3Dy%3B%0A%09%09Resolve(x)%3B%0A%09%09Resolve(y)%3B%0A%09%7D%0A%7D%0A%0Asigned%20main()%7B%0A%09srand(19260817)%3B%0A%09int%20T%3B%0A%09long%20long%20x%2Cres%3B%0A%09scanf(%22%25d%22%2C%26T)%3B%0A%09while(T--)%7B%0A%09%09scanf(%22%25lld%22%2C%26x)%3B%0A%09%09Pollard_Rho%3A%3Aans.clear()%3B%0A%09%09Pollard_Rho%3A%3AResolve(x)%3B%0A%09%09for(int%20i%3D0%3Bi%3CPollard_Rho%3A%3Aans.size()%3B%2B%2Bi)%7B%0A%09%09%09printf(%22%25lld%20%22%2CPollard_Rho%3A%3Aans%5Bi%5D)%3B%0A%09%09%7D%0A%09%09printf(%22%5Cn%22)%3B%0A%09%7D%0A%7D%0A%60%60%60</center></span>
+</div></body></html> 

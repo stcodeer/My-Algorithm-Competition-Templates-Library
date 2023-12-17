@@ -1,0 +1,78 @@
+<html>
+<head>
+  <title>快速数论变换</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1134"/>
+<h1>快速数论变换</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2e5</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> G = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mod = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">998244353</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> fac[N],rev[N];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">qpow</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> a,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> b)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> r=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(b){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(b&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)r=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1l</span>l*r*a%mod;
+		b&gt;&gt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;a=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1l</span>l*a*a%mod; 
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> r;
+}
+
+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">struct</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">NTT</span>{</span>
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m,rev[N&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> a[N&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>],b[N&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>];
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">init</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> len)</span></span>{
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(n=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,m=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;n&lt;=len;n&lt;&lt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,m++);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i){
+			rev[i]=rev[i&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]&gt;&gt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>|(<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>&amp;i)&lt;&lt;(m<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>);
+			a[i]=b[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+		}
+	}
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ntt</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> *a,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> f)</span></span>{
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(i&lt;rev[i])swap(a[i],a[rev[i]]);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;n;i&lt;&lt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> wn=qpow(G,(mod<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>)/(i&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>));
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(f==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>)wn=qpow(wn,mod<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-2</span>);
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;j&lt;n;j+=i&lt;&lt;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>){
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> w=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+				<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> k=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;k&lt;i;++k,w=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1l</span>l*w*wn%mod){
+					<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=a[j+k],y=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1l</span>l*a[j+k+i]*w%mod;
+					a[j+k]=(x+y)%mod;a[j+k+i]=(x-y+mod)%mod;
+				} 
+			}
+		}
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(f==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>){
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> rn=qpow(n,mod<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-2</span>);
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)a[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1l</span>l*a[i]*rn%mod;
+		}
+	}
+	
+	<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">work</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+		ntt(a,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);ntt(b,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i)a[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1l</span>l*a[i]*b[i]%mod;
+		ntt(a,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>);
+	}
+}B;
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+}
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Aconst%20int%20N%20%3D%202e5%2B5%3B%0Aconst%20int%20G%20%3D%203%3B%0Aconst%20int%20mod%20%3D%20998244353%3B%0A%0Aint%20fac%5BN%5D%2Crev%5BN%5D%3B%0A%0Aint%20qpow(int%20a%2Cint%20b)%7B%0A%09int%20r%3D1%3B%0A%09while(b)%7B%0A%09%09if(b%261)r%3D1ll*r*a%25mod%3B%0A%09%09b%3E%3E%3D1%3Ba%3D1ll*a*a%25mod%3B%20%0A%09%7D%0A%09return%20r%3B%0A%7D%0A%0Astruct%20NTT%7B%0A%09int%20n%2Cm%2Crev%5BN%3C%3C1%5D%3B%0A%09int%20a%5BN%3C%3C1%5D%2Cb%5BN%3C%3C1%5D%3B%0A%09%0A%09void%20init(int%20len)%7B%0A%09%09for(n%3D1%2Cm%3D0%3Bn%3C%3Dlen%3Bn%3C%3C%3D1%2Cm%2B%2B)%3B%0A%09%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)%7B%0A%09%09%09rev%5Bi%5D%3Drev%5Bi%3E%3E1%5D%3E%3E1%7C(1%26i)%3C%3C(m-1)%3B%0A%09%09%09a%5Bi%5D%3Db%5Bi%5D%3D0%3B%0A%09%09%7D%0A%09%7D%0A%09%0A%09void%20ntt(int%20*a%2Cint%20f)%7B%0A%09%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)if(i%3Crev%5Bi%5D)swap(a%5Bi%5D%2Ca%5Brev%5Bi%5D%5D)%3B%0A%09%09for(int%20i%3D1%3Bi%3Cn%3Bi%3C%3C%3D1)%7B%0A%09%09%09int%20wn%3Dqpow(G%2C(mod-1)%2F(i%3C%3C1))%3B%0A%09%09%09if(f%3D%3D-1)wn%3Dqpow(wn%2Cmod-2)%3B%0A%09%09%09for(int%20j%3D0%3Bj%3Cn%3Bj%2B%3Di%3C%3C1)%7B%0A%09%09%09%09int%20w%3D1%3B%0A%09%09%09%09for(int%20k%3D0%3Bk%3Ci%3B%2B%2Bk%2Cw%3D1ll*w*wn%25mod)%7B%0A%09%09%09%09%09int%20x%3Da%5Bj%2Bk%5D%2Cy%3D1ll*a%5Bj%2Bk%2Bi%5D*w%25mod%3B%0A%09%09%09%09%09a%5Bj%2Bk%5D%3D(x%2By)%25mod%3Ba%5Bj%2Bk%2Bi%5D%3D(x-y%2Bmod)%25mod%3B%0A%09%09%09%09%7D%20%0A%09%09%09%7D%0A%09%09%7D%0A%09%09if(f%3D%3D-1)%7B%0A%09%09%09int%20rn%3Dqpow(n%2Cmod-2)%3B%0A%09%09%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)a%5Bi%5D%3D1ll*a%5Bi%5D*rn%25mod%3B%0A%09%09%7D%0A%09%7D%0A%09%0A%09void%20work()%7B%0A%09%09ntt(a%2C1)%3Bntt(b%2C1)%3B%0A%09%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)a%5Bi%5D%3D1ll*a%5Bi%5D*b%5Bi%5D%25mod%3B%0A%09%09ntt(a%2C-1)%3B%0A%09%7D%0A%7DB%3B%0A%0Aint%20main()%7B%0A%7D%0A%60%60%60</center></span>
+</div></body></html> 

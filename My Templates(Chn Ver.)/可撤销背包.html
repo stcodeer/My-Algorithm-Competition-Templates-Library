@@ -1,0 +1,45 @@
+<html>
+<head>
+  <title>可撤销背包</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="661"/>
+<h1>可撤销背包</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><p style="line-height: 160%; box-sizing: content-box; margin: 10px 0; color: #333;">可撤销操作只适用于求方案背包，不适用于求最大值背包。若想要求最大值背包，且想要求出排除每种物品时的最大值背包，则可以通过分治的方法实现。</p>
+<pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2e3</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> M = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2e3</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mod = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">10</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,m,w[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> f[M];
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;w[i]);
+    f[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=m;j&gt;=w[i];--j)f[j]=(f[j]+f[j-w[i]])%mod;
+    }
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">static</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> g[M];
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;j&lt;w[i];++j)g[j]=f[j];
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=w[i];j&lt;=m;++j)g[j]=(f[j]-g[j-w[i]]+mod)%mod;
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;j&lt;=m;++j)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,g[j]);
+        <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;\n&quot;</span>);
+    }
+}
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%E5%8F%AF%E6%92%A4%E9%94%80%E6%93%8D%E4%BD%9C%E5%8F%AA%E9%80%82%E7%94%A8%E4%BA%8E%E6%B1%82%E6%96%B9%E6%A1%88%E8%83%8C%E5%8C%85%EF%BC%8C%E4%B8%8D%E9%80%82%E7%94%A8%E4%BA%8E%E6%B1%82%E6%9C%80%E5%A4%A7%E5%80%BC%E8%83%8C%E5%8C%85%E3%80%82%E8%8B%A5%E6%83%B3%E8%A6%81%E6%B1%82%E6%9C%80%E5%A4%A7%E5%80%BC%E8%83%8C%E5%8C%85%EF%BC%8C%E4%B8%94%E6%83%B3%E8%A6%81%E6%B1%82%E5%87%BA%E6%8E%92%E9%99%A4%E6%AF%8F%E7%A7%8D%E7%89%A9%E5%93%81%E6%97%B6%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC%E8%83%8C%E5%8C%85%EF%BC%8C%E5%88%99%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E5%88%86%E6%B2%BB%E7%9A%84%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0%E3%80%82%0A%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Aconst%20int%20N%20%3D%202e3%2B5%3B%0Aconst%20int%20M%20%3D%202e3%2B5%3B%0Aconst%20int%20mod%20%3D%2010%3B%0Aint%20n%2Cm%2Cw%5BN%5D%3B%0Aint%20f%5BM%5D%3B%0Aint%20main()%7B%0A%20%20%20%20scanf(%22%25d%25d%22%2C%26n%2C%26m)%3B%0A%20%20%20%20for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)scanf(%22%25d%22%2C%26w%5Bi%5D)%3B%0A%20%20%20%20f%5B0%5D%3D1%3B%0A%20%20%20%20for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)%7B%0A%20%20%20%20%20%20%20%20for(int%20j%3Dm%3Bj%3E%3Dw%5Bi%5D%3B--j)f%5Bj%5D%3D(f%5Bj%5D%2Bf%5Bj-w%5Bi%5D%5D)%25mod%3B%0A%20%20%20%20%7D%0A%20%20%20%20for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)%7B%0A%20%20%20%20%20%20%20%20static%20int%20g%5BM%5D%3B%0A%20%20%20%20%20%20%20%20for(int%20j%3D0%3Bj%3Cw%5Bi%5D%3B%2B%2Bj)g%5Bj%5D%3Df%5Bj%5D%3B%0A%20%20%20%20%20%20%20%20for(int%20j%3Dw%5Bi%5D%3Bj%3C%3Dm%3B%2B%2Bj)g%5Bj%5D%3D(f%5Bj%5D-g%5Bj-w%5Bi%5D%5D%2Bmod)%25mod%3B%0A%20%20%20%20%20%20%20%20for(int%20j%3D1%3Bj%3C%3Dm%3B%2B%2Bj)printf(%22%25d%22%2Cg%5Bj%5D)%3B%0A%20%20%20%20%20%20%20%20printf(%22%5Cn%22)%3B%0A%20%20%20%20%7D%0A%7D%0A%60%60%60%0A</center></span>
+</div></body></html> 

@@ -1,0 +1,63 @@
+<html>
+<head>
+  <title>最小圆覆盖</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1655"/>
+<h1>最小圆覆盖</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">double</span> db;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1e5</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+ 
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,id[N];
+db x[N],y[N],R;
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">db <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">dis</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">sqrt</span>((x[i]-x[j])*(x[i]-x[j])+(y[i]-y[j])*(y[i]-y[j]));
+}
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">bool</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">incircle</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i)</span></span>{
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> dis(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>)&lt;=R;
+}
+ 
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;n);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%lf%lf&quot;</span>,&amp;x[i],&amp;y[i]);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)id[i]=i;
+    random_shuffle(id+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,id+n+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=n;++i)
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!incircle(i)){
+        x[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=x[i];y[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=y[i];R=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;j&lt;i;++j)
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!incircle(j)){
+            x[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=(x[i]+x[j])/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;y[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=(y[i]+y[j])/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;R=dis(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> k=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;k&lt;j;++k)
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(!incircle(k)){
+                db a1=x[j]-x[i],b1=y[j]-y[i],c1=(a1*a1+b1*b1)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+                db a2=x[k]-x[i],b2=y[k]-y[i],c2=(a2*a2+b2*b2)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+                db d=a1*b2-a2*b1;
+                x[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=x[i]+(c1*b2-c2*b1)/d;
+                y[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=y[i]+(a1*c2-a2*c1)/d;
+                R=dis(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>);
+            }
+        }
+    }
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%.3lf\n&quot;</span>,R);
+} 
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Atypedef%20double%20db%3B%0Aconst%20int%20N%20%3D%201e5%2B1%3B%0A%20%0Aint%20n%2Cid%5BN%5D%3B%0Adb%20x%5BN%5D%2Cy%5BN%5D%2CR%3B%0A%20%0Adb%20dis(int%20i%2Cint%20j)%7B%0A%20%20%20%20return%20sqrt((x%5Bi%5D-x%5Bj%5D)*(x%5Bi%5D-x%5Bj%5D)%2B(y%5Bi%5D-y%5Bj%5D)*(y%5Bi%5D-y%5Bj%5D))%3B%0A%7D%0A%20%0Abool%20incircle(int%20i)%7B%0A%20%20%20%20return%20dis(i%2C0)%3C%3DR%3B%0A%7D%0A%20%0Aint%20main()%7B%0A%20%20%20%20scanf(%22%25d%22%2C%26n)%3B%0A%20%20%20%20for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)scanf(%22%25lf%25lf%22%2C%26x%5Bi%5D%2C%26y%5Bi%5D)%3B%0A%20%20%20%20for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)id%5Bi%5D%3Di%3B%0A%20%20%20%20random_shuffle(id%2B1%2Cid%2Bn%2B1)%3B%0A%20%20%20%20for(int%20i%3D1%3Bi%3C%3Dn%3B%2B%2Bi)%0A%20%20%20%20if(!incircle(i))%7B%0A%20%20%20%20%20%20%20%20x%5B0%5D%3Dx%5Bi%5D%3By%5B0%5D%3Dy%5Bi%5D%3BR%3D0%3B%0A%20%20%20%20%20%20%20%20for(int%20j%3D1%3Bj%3Ci%3B%2B%2Bj)%0A%20%20%20%20%20%20%20%20if(!incircle(j))%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20x%5B0%5D%3D(x%5Bi%5D%2Bx%5Bj%5D)%2F2%3By%5B0%5D%3D(y%5Bi%5D%2By%5Bj%5D)%2F2%3BR%3Ddis(i%2C0)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20for(int%20k%3D1%3Bk%3Cj%3B%2B%2Bk)%0A%20%20%20%20%20%20%20%20%20%20%20%20if(!incircle(k))%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20db%20a1%3Dx%5Bj%5D-x%5Bi%5D%2Cb1%3Dy%5Bj%5D-y%5Bi%5D%2Cc1%3D(a1*a1%2Bb1*b1)%2F2%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20db%20a2%3Dx%5Bk%5D-x%5Bi%5D%2Cb2%3Dy%5Bk%5D-y%5Bi%5D%2Cc2%3D(a2*a2%2Bb2*b2)%2F2%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20db%20d%3Da1*b2-a2*b1%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20x%5B0%5D%3Dx%5Bi%5D%2B(c1*b2-c2*b1)%2Fd%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20y%5B0%5D%3Dy%5Bi%5D%2B(a1*c2-a2*c1)%2Fd%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20R%3Ddis(i%2C0)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20printf(%22%25.3lf%5Cn%22%2CR)%3B%0A%7D%20%0A%0A%60%60%60</center></span>
+</div></body></html> 

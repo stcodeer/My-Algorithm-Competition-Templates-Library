@@ -1,0 +1,78 @@
+<html>
+<head>
+  <title>五边形数求整数划分</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="636"/>
+<h1>五边形数求整数划分</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><p style="line-height: 160%; box-sizing: content-box; margin: 10px 0; color: #333;">给定数字<span style="font: normal 1.21em KaTeX_Main,Times New Roman,serif; white-space: nowrap; text-indent: 0; text-rendering: auto; line-height: 160%; box-sizing: content-box;"><span style="line-height: 160%; box-sizing: content-box; clip: rect(1px,1px,1px,1px); padding: 0; border: 0; overflow: hidden; position: fixed; -ms-high-contrast-adjust: none;"></span><span style="line-height: 160%; box-sizing: content-box; display: inline-block; -ms-high-contrast-adjust: none;"><span style="line-height: 160%; box-sizing: content-box; display: inline-block; height: 0.43056em; -ms-high-contrast-adjust: none;"></span><span style="line-height: 160%; box-sizing: content-box; display: inline-block; height: 0.43056em; vertical-align: 0em; -ms-high-contrast-adjust: none;"></span><span style="line-height: 160%; box-sizing: content-box; position: relative; display: inline-block; -ms-high-contrast-adjust: none;"><span style="line-height: 160%; box-sizing: content-box; font-family: KaTeX_Math; font-style: italic; -ms-high-contrast-adjust: none;">n</span></span></span></span>，将其划分为若干个整数的和，其中每个整数只能用<span style="font: normal 1.21em KaTeX_Main,Times New Roman,serif; white-space: nowrap; text-indent: 0; text-rendering: auto; line-height: 160%; box-sizing: content-box;"><span style="line-height: 160%; box-sizing: content-box; clip: rect(1px,1px,1px,1px); padding: 0; border: 0; overflow: hidden; position: fixed; -ms-high-contrast-adjust: none;"></span><span style="line-height: 160%; box-sizing: content-box; display: inline-block; -ms-high-contrast-adjust: none;"><span style="line-height: 160%; box-sizing: content-box; display: inline-block; height: 0.69444em; -ms-high-contrast-adjust: none;"></span><span style="line-height: 160%; box-sizing: content-box; display: inline-block; height: 0.69444em; vertical-align: 0em; -ms-high-contrast-adjust: none;"></span><span style="line-height: 160%; box-sizing: content-box; position: relative; display: inline-block; -ms-high-contrast-adjust: none;"><span style="line-height: 160%; box-sizing: content-box; font-family: KaTeX_Math; font-style: italic; margin-right: 0.03148em; -ms-high-contrast-adjust: none;">k</span></span></span></span>次以内。</p>
+<p style="line-height: 160%; box-sizing: content-box; margin: 10px 0; color: #333;">https://blog.csdn.net/zhoufenqin/article/details/9821617</p>
+<pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">typedef</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">long</span> ll;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> maxn = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">100010</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> dp[maxn];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> mod = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1000000000</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">7</span>;
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ll <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">five</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(ll x)</span></span>{<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> (<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">3</span>*x*x-x)/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;}
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">add_mod</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> a,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> b)</span></span>{<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> a+b&gt;=mod?a+b-mod:a+b;}
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">init</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    dp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;maxn;i++){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> j=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;;j++){
+            ll k=five(j);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(k&lt;=i){
+                dp[i]=add_mod(dp[i],(j&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)?dp[i-k]:mod-dp[i-k]);
+            }
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span>{
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+            }
+            k=five(-j);
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(k&lt;=i){
+                dp[i]=add_mod(dp[i],(j&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)?dp[i-k]:mod-dp[i-k]);
+            }<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span>{
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+            }
+        }
+    }
+}
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> q[maxn];
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">initq</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    q[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;maxn;i++){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(i&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>) q[i]=five(i/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>);
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> q[i]=five(-(i/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>));
+    }
+}
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">solve</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(ll n,ll k)</span></span>{
+    ll ans=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;;i++){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(q[i]*k&gt;n) <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">break</span>;
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> t=i;
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(t&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>) t=t/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> t=t/<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>;
+        ans=add_mod(ans,(t&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>)?mod-dp[n-q[i]*k]:dp[n-q[i]*k]);
+    }
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> ans;
+}
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+    init();initq();
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> T;<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;T);
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(T--){
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n,k;<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;n,&amp;k);
+        <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d\n&quot;</span>,solve(n,k));
+    }
+}
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%E7%BB%99%E5%AE%9A%E6%95%B0%E5%AD%97%24n%24%EF%BC%8C%E5%B0%86%E5%85%B6%E5%88%92%E5%88%86%E4%B8%BA%E8%8B%A5%E5%B9%B2%E4%B8%AA%E6%95%B4%E6%95%B0%E7%9A%84%E5%92%8C%EF%BC%8C%E5%85%B6%E4%B8%AD%E6%AF%8F%E4%B8%AA%E6%95%B4%E6%95%B0%E5%8F%AA%E8%83%BD%E7%94%A8%24k%24%E6%AC%A1%E4%BB%A5%E5%86%85%E3%80%82%0A%0Ahttps%3A%2F%2Fblog.csdn.net%2Fzhoufenqin%2Farticle%2Fdetails%2F9821617%0A%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0Ausing%20namespace%20std%3B%0Atypedef%20long%20long%20ll%3B%0Aconst%20int%20maxn%20%3D%20100010%3B%0Aint%20dp%5Bmaxn%5D%3B%0Aconst%20int%20mod%20%3D%201000000000%2B7%3B%0All%20five(ll%20x)%7Breturn%20(3*x*x-x)%2F2%3B%7D%0Aint%20add_mod(int%20a%2Cint%20b)%7Breturn%20a%2Bb%3E%3Dmod%3Fa%2Bb-mod%3Aa%2Bb%3B%7D%0Avoid%20init()%7B%0A%20%20%20%20dp%5B0%5D%3D1%3B%0A%20%20%20%20for(int%20i%3D1%3Bi%3Cmaxn%3Bi%2B%2B)%7B%0A%20%20%20%20%20%20%20%20for(int%20j%3D1%3B%3Bj%2B%2B)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20ll%20k%3Dfive(j)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(k%3C%3Di)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20dp%5Bi%5D%3Dadd_mod(dp%5Bi%5D%2C(j%261)%3Fdp%5Bi-k%5D%3Amod-dp%5Bi-k%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20else%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20k%3Dfive(-j)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(k%3C%3Di)%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20dp%5Bi%5D%3Dadd_mod(dp%5Bi%5D%2C(j%261)%3Fdp%5Bi-k%5D%3Amod-dp%5Bi-k%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7Delse%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0Aint%20q%5Bmaxn%5D%3B%0Avoid%20initq()%7B%0A%20%20%20%20q%5B0%5D%3D0%3B%0A%20%20%20%20for(int%20i%3D1%3Bi%3Cmaxn%3Bi%2B%2B)%7B%0A%20%20%20%20%20%20%20%20if(i%261)%20q%5Bi%5D%3Dfive(i%2F2%2B1)%3B%0A%20%20%20%20%20%20%20%20else%20q%5Bi%5D%3Dfive(-(i%2F2))%3B%0A%20%20%20%20%7D%0A%7D%0Aint%20solve(ll%20n%2Cll%20k)%7B%0A%20%20%20%20ll%20ans%3D0%3B%0A%20%20%20%20for(int%20i%3D0%3B%3Bi%2B%2B)%7B%0A%20%20%20%20%20%20%20%20if(q%5Bi%5D*k%3En)%20break%3B%0A%20%20%20%20%20%20%20%20int%20t%3Di%3B%0A%20%20%20%20%20%20%20%20if(t%261)%20t%3Dt%2F2%2B1%3B%0A%20%20%20%20%20%20%20%20else%20t%3Dt%2F2%3B%0A%20%20%20%20%20%20%20%20ans%3Dadd_mod(ans%2C(t%261)%3Fmod-dp%5Bn-q%5Bi%5D*k%5D%3Adp%5Bn-q%5Bi%5D*k%5D)%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20ans%3B%0A%7D%0Aint%20main()%7B%0A%20%20%20%20init()%3Binitq()%3B%0A%20%20%20%20int%20T%3Bscanf(%22%25d%22%2C%26T)%3B%0A%20%20%20%20while(T--)%7B%0A%20%20%20%20%20%20%20%20int%20n%2Ck%3Bscanf(%22%25d%25d%22%2C%26n%2C%26k)%3B%0A%20%20%20%20%20%20%20%20printf(%22%25d%5Cn%22%2Csolve(n%2Ck))%3B%0A%20%20%20%20%7D%0A%7D%0A%60%60%60</center></span>
+</div></body></html> 

@@ -1,0 +1,87 @@
+<html>
+<head>
+  <title>AC自动机(last优化)</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="1615"/>
+<h1>AC自动机(last优化)</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span><span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> id(x) x-<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">'a'</span></span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> N = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">51</span>;
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">const</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> az = <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">27</span>;
+
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> tr[N][az],tot,T,head,tail,q[N],fail[N*az],tag[N*az],ans[N*az],last[N*az],to[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">11</span>];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">char</span> s2[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">100000001</span>],s1[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">11</span>][N];
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">insert</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">char</span> *s,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> now)</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n=<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">strlen</span>(s);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(tr[x][id(s[i])]==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>){
+			tr[x][id(s[i])]=++tot;
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> t=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;t&lt;az;++t)tr[tot][t]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;
+		}
+		x=tr[x][id(s[i])];
+	}
+	tag[x]=now;
+	to[now]=x;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">getfail</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	head=tail=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;az;++i)
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(tr[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>][i]!=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>) last[tr[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>][i]]=fail[tr[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>][i]]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,q[++tail]=tr[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>][i];
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span> tr[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>][i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(head!=tail){
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=q[++head];
+		<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;az;++i){
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(tag[tr[fail[x]][i]])last[tr[x][i]]=tr[fail[x]][i];
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span>	last[tr[x][i]]=last[tr[fail[x]][i]];
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(tr[x][i]!=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>) fail[tr[x][i]]=tr[fail[x]][i],q[++tail]=tr[x][i];
+			<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">else</span>	tr[x][i]=tr[fail[x]][i];
+		}
+		
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> n=<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">strlen</span>(s2);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;n;++i){
+		x=tr[x][id(s2[i])];
+		ans[x]++;
+	}
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=tail;i;i--)
+	ans[last[q[i]]]+=ans[q[i]];
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//	for(int i=0;i&lt;n;++i)</span>
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//	{</span>
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//		for(int j=tr[x][id(s2[i])];j;j=fail[j])</span>
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//		if(tag[j])ans[tag[j]]++;</span>
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//		x=tr[x][id(s2[i])];</span>
+<span style="color: #57a64a; font-style: italic; line-height: 160%; box-sizing: content-box;">//	}</span>
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span></span>{
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;i&lt;az;++i)tr[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>][i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>;
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d&quot;</span>,&amp;T);
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=T;++i){<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%s&quot;</span>,s1[i]);insert(s1[i],i);}
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%s&quot;</span>,&amp;s2);
+	getfail();
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;i&lt;=T;++i)
+	<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">cout</span>&lt;&lt;s1[i]&lt;&lt;<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot; &quot;</span>&lt;&lt;ans[to[i]]&lt;&lt;<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">endl</span>;
+	<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> <span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+}
+
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%3Cbits%2Fstdc%2B%2B.h%3E%0A%23define%20id(x)%20x-'a'%0Ausing%20namespace%20std%3B%0Aconst%20int%20N%20%3D%2051%3B%0Aconst%20int%20az%20%3D%2027%3B%0A%0Aint%20tr%5BN%5D%5Baz%5D%2Ctot%2CT%2Chead%2Ctail%2Cq%5BN%5D%2Cfail%5BN*az%5D%2Ctag%5BN*az%5D%2Cans%5BN*az%5D%2Clast%5BN*az%5D%2Cto%5B11%5D%3B%0Achar%20s2%5B100000001%5D%2Cs1%5B11%5D%5BN%5D%3B%0A%0Aint%20insert(char%20*s%2Cint%20now)%7B%0A%09int%20n%3Dstrlen(s)%3B%0A%09int%20x%3D0%3B%0A%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)%7B%0A%09%09if(tr%5Bx%5D%5Bid(s%5Bi%5D)%5D%3D%3D-1)%7B%0A%09%09%09tr%5Bx%5D%5Bid(s%5Bi%5D)%5D%3D%2B%2Btot%3B%0A%09%09%09for(int%20t%3D0%3Bt%3Caz%3B%2B%2Bt)tr%5Btot%5D%5Bt%5D%3D-1%3B%0A%09%09%7D%0A%09%09x%3Dtr%5Bx%5D%5Bid(s%5Bi%5D)%5D%3B%0A%09%7D%0A%09tag%5Bx%5D%3Dnow%3B%0A%09to%5Bnow%5D%3Dx%3B%0A%7D%0A%0Aint%20getfail()%7B%0A%09head%3Dtail%3D0%3B%0A%09for(int%20i%3D0%3Bi%3Caz%3B%2B%2Bi)%0A%09if(tr%5B0%5D%5Bi%5D!%3D-1)%20last%5Btr%5B0%5D%5Bi%5D%5D%3Dfail%5Btr%5B0%5D%5Bi%5D%5D%3D0%2Cq%5B%2B%2Btail%5D%3Dtr%5B0%5D%5Bi%5D%3B%0A%09else%20tr%5B0%5D%5Bi%5D%3D0%3B%0A%09while(head!%3Dtail)%7B%0A%09%09int%20x%3Dq%5B%2B%2Bhead%5D%3B%0A%09%09for(int%20i%3D0%3Bi%3Caz%3B%2B%2Bi)%7B%0A%09%09%09if(tag%5Btr%5Bfail%5Bx%5D%5D%5Bi%5D%5D)last%5Btr%5Bx%5D%5Bi%5D%5D%3Dtr%5Bfail%5Bx%5D%5D%5Bi%5D%3B%0A%09%09%09else%09last%5Btr%5Bx%5D%5Bi%5D%5D%3Dlast%5Btr%5Bfail%5Bx%5D%5D%5Bi%5D%5D%3B%0A%09%09%09if(tr%5Bx%5D%5Bi%5D!%3D-1)%20fail%5Btr%5Bx%5D%5Bi%5D%5D%3Dtr%5Bfail%5Bx%5D%5D%5Bi%5D%2Cq%5B%2B%2Btail%5D%3Dtr%5Bx%5D%5Bi%5D%3B%0A%09%09%09else%09tr%5Bx%5D%5Bi%5D%3Dtr%5Bfail%5Bx%5D%5D%5Bi%5D%3B%0A%09%09%7D%0A%09%09%0A%09%7D%0A%09int%20n%3Dstrlen(s2)%3B%0A%09int%20x%3D0%3B%0A%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)%7B%0A%09%09x%3Dtr%5Bx%5D%5Bid(s2%5Bi%5D)%5D%3B%0A%09%09ans%5Bx%5D%2B%2B%3B%0A%09%7D%0A%09for(int%20i%3Dtail%3Bi%3Bi--)%0A%09ans%5Blast%5Bq%5Bi%5D%5D%5D%2B%3Dans%5Bq%5Bi%5D%5D%3B%0A%2F%2F%09for(int%20i%3D0%3Bi%3Cn%3B%2B%2Bi)%0A%2F%2F%09%7B%0A%2F%2F%09%09for(int%20j%3Dtr%5Bx%5D%5Bid(s2%5Bi%5D)%5D%3Bj%3Bj%3Dfail%5Bj%5D)%0A%2F%2F%09%09if(tag%5Bj%5D)ans%5Btag%5Bj%5D%5D%2B%2B%3B%0A%2F%2F%09%09x%3Dtr%5Bx%5D%5Bid(s2%5Bi%5D)%5D%3B%0A%2F%2F%09%7D%0A%09return%200%3B%0A%7D%0A%0Aint%20main()%7B%0A%09for(int%20i%3D0%3Bi%3Caz%3B%2B%2Bi)tr%5B0%5D%5Bi%5D%3D-1%3B%0A%09scanf(%22%25d%22%2C%26T)%3B%0A%09for(int%20i%3D1%3Bi%3C%3DT%3B%2B%2Bi)%7Bscanf(%22%25s%22%2Cs1%5Bi%5D)%3Binsert(s1%5Bi%5D%2Ci)%3B%7D%0A%09scanf(%22%25s%22%2C%26s2)%3B%0A%09getfail()%3B%0A%09for(int%20i%3D1%3Bi%3C%3DT%3B%2B%2Bi)%0A%09cout%3C%3Cs1%5Bi%5D%3C%3C%22%20%22%3C%3Cans%5Bto%5Bi%5D%5D%3C%3Cendl%3B%0A%09return%200%3B%0A%7D%0A%0A%60%60%60</center></span>
+</div></body></html> 

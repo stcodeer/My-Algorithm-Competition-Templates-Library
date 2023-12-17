@@ -1,0 +1,154 @@
+<html>
+<head>
+  <title>随机游走</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="YXBJ Windows/603450 (zh-CN, DDL); Windows/10.0.0 (Win64); EDAMVersion=V2;"/>
+  <meta name="content-class" content="yinxiang.markdown"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="638"/>
+<h1>随机游走</h1>
+
+<div><span><div style="font-size: 14px; margin: 0; padding: 0; width: 100%;"><pre style="line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; margin: 2px 0 8px; background-color: #f5f7f8;"><code style="display: block; overflow-x: auto; background: #1e1e1e; line-height: 160%; box-sizing: content-box; border: 0; border-radius: 0; letter-spacing: -.3px; padding: 18px; color: #f4f4f4; white-space: pre-wrap;"><span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">include</span> <span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&lt;bits/stdc++.h&gt;</span></span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> fo(i,a,b) for(int i=a;i&lt;=b;++i)</span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> fod(i,a,b) for(int i=a;i&gt;=b;--i)</span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> N 5005</span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> LL long long</span>
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> mo 998244353</span>
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">using</span> <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">namespace</span> <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">std</span>;
+LL ny[N],f[N],g[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> m1,n,m,t,rd[N],n1;
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">LL <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">ksm</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">(LL k,LL n)</span>
+</span>{
+    LL s=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(;n;n&gt;&gt;=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,k=k*k%mo) <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(n&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>) s=s*k%mo;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">return</span> s;
+}
+LL ap[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>*N],fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>][N],gp[N];
+<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> d[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>][N];
+<span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span>&gt; a1[N];
+<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">#<span style="color: #9b9b9b; line-height: 160%; box-sizing: content-box;">define</span> inc(x,v) (x=(x+v)%mo)</span>
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">bfs</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span>
+</span>{
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">memset</span>(fp,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">sizeof</span>(fp));
+    LL sum=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>][<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,ap[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> p,r;LL v;
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">vector</span>&lt;<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span>&gt;::iterator it;
+    fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>*n<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>)
+    {
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> i1=i&amp;<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+        fo(j,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n) fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>^i1][j]=gp[j]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        fo(k,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-1</span>)
+        {
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(fp[i1][k]&amp;&amp;k!=n)
+            {
+                v=fp[i1][k]*ny[rd[k]]%mo*ny[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>]%mo;
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(it=a1[k].begin();it!=a1[k].end();it++)
+                {
+                    p=*it;
+                    inc(fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>^i1][p],v);
+                }
+            }
+        }
+        fo(k,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n) gp[k]=fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>^i1][k];
+        fo(k,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n)
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(gp[k])
+            {
+                v=gp[k]*ny[rd[k]]%mo;
+                <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">for</span>(it=a1[k].begin();it!=a1[k].end();it++)
+                {
+                    p=*it;
+                    inc(fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>^i1][p],v);
+                }
+            }
+        sum=(sum-fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>^i1][n]+mo)%mo;
+        ap[i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=sum;
+        fp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>^i1][n]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    }
+}
+
+LL rc[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">4</span>*N],rp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">4</span>*N],le,le1,rw[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">4</span>*N];
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">void</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">BM</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span>
+</span>{
+    le=le1=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">memset</span>(rc,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">sizeof</span>(rc));
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">memset</span>(rp,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">sizeof</span>(rp));
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> lf=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;LL lv=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+    fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,n1)
+    {
+        LL v=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        fo(j,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,le) inc(v,rc[j]*ap[i-j]%mo);
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(v==ap[i]) <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">continue</span>;
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(le==<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>)
+        {
+            le=i+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+            fo(j,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,le) rc[j]=rp[j]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+            le1=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,lf=i,lv=(ap[i]-v)%mo;
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">continue</span>;
+        }
+        v=(ap[i]-v+mo)%mo;
+        LL mul=v*ksm(lv,mo<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-2</span>)%mo;
+
+        fo(j,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,le) rw[j]=rc[j];
+
+        inc(rc[i-lf],mul);
+        fo(j,i-lf+<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,i-lf+le1) inc(rc[j],(mo-mul*rp[j-(i-lf)]%mo)%mo);
+        <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(le&lt;i-lf+le1)
+        {
+            swap(le1,le);
+            le=i-lf+le,lf=i,lv=v;
+            fo(j,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,le1) rp[j]=rw[j];
+        }
+
+        v=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        fo(j,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,le) inc(v,rc[j]*ap[i-j]%mo);
+    }
+}
+
+<span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;"><span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> <span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">main</span><span style="color: #dcdcdc; line-height: 160%; box-sizing: content-box;">()</span>
+</span>{
+    ny[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>;
+    fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">5000</span>) ny[i]=(-ny[mo%i]*(LL)(mo/i)%mo+mo)%mo;
+    <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">cin</span>&gt;&gt;t;
+    <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">while</span>(t--)
+    {
+        <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+        fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,n)
+        {
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,y;
+            <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;x,&amp;y);
+            a1[i].clear();
+        }
+        <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">memset</span>(rd,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,<span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">sizeof</span>(rd));
+        m1=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,m)
+        {
+            <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">int</span> x,y;
+            <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">scanf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%d%d&quot;</span>,&amp;x,&amp;y);
+            a1[x].push_back(y),a1[y].push_back(x);
+            rd[x]++,rd[y]++;
+        }
+        n1=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">2</span>*n;
+        bfs();
+        BM();
+        rc[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,rp[<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">1</span>,le) rc[i]=(mo-rc[i])%mo,rp[i]=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,le)
+            fo(j,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,n1) <span style="color: #569cd6; line-height: 160%; box-sizing: content-box;">if</span>(i+j&lt;=le) inc(rp[i+j],rc[i]*ap[j]%mo);
+        LL ans=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,sv=<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>;
+        fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,le+n1) inc(ans,rp[i]);
+        fo(i,<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">0</span>,le) inc(sv,rc[i]);
+        <span style="color: #4ec9b0; line-height: 160%; box-sizing: content-box;">printf</span>(<span style="color: #d69d85; line-height: 160%; box-sizing: content-box;">&quot;%lld\n&quot;</span>,ans*ksm(sv,mo<span style="color: #b8d7a3; line-height: 160%; box-sizing: content-box;">-2</span>)%mo);
+    }
+}
+</code></pre>
+</div><center style="display:none !important;visibility:collapse !important;height:0 !important;white-space:nowrap;width:100%;overflow:hidden">%60%60%60c%2B%2B%0A%23include%20%3Cbits%2Fstdc%2B%2B.h%3E%0A%23define%20fo(i%2Ca%2Cb)%20for(int%20i%3Da%3Bi%3C%3Db%3B%2B%2Bi)%0A%23define%20fod(i%2Ca%2Cb)%20for(int%20i%3Da%3Bi%3E%3Db%3B--i)%0A%23define%20N%205005%0A%23define%20LL%20long%20long%0A%23define%20mo%20998244353%0Ausing%20namespace%20std%3B%0ALL%20ny%5BN%5D%2Cf%5BN%5D%2Cg%5BN%5D%3B%0Aint%20m1%2Cn%2Cm%2Ct%2Crd%5BN%5D%2Cn1%3B%0ALL%20ksm(LL%20k%2CLL%20n)%0A%7B%0A%20%20%20%20LL%20s%3D1%3B%0A%20%20%20%20for(%3Bn%3Bn%3E%3E%3D1%2Ck%3Dk*k%25mo)%20if(n%261)%20s%3Ds*k%25mo%3B%0A%20%20%20%20return%20s%3B%0A%7D%0ALL%20ap%5B2*N%5D%2Cfp%5B2%5D%5BN%5D%2Cgp%5BN%5D%3B%0Aint%20d%5B2%5D%5BN%5D%3B%0Avector%3Cint%3E%20a1%5BN%5D%3B%0A%23define%20inc(x%2Cv)%20(x%3D(x%2Bv)%25mo)%0Avoid%20bfs()%0A%7B%0A%20%20%20%20memset(fp%2C0%2Csizeof(fp))%3B%0A%20%20%20%20LL%20sum%3D1%3B%0A%20%20%20%20fp%5B0%5D%5B1%5D%3D1%2Cap%5B0%5D%3D1%3B%0A%20%20%20%20int%20p%2Cr%3BLL%20v%3B%0A%20%20%20%20vector%3Cint%3E%3A%3Aiterator%20it%3B%0A%20%20%20%20fo(i%2C0%2C2*n-1)%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20int%20i1%3Di%261%3B%0A%20%20%20%20%20%20%20%20fo(j%2C1%2Cn)%20fp%5B1%5Ei1%5D%5Bj%5D%3Dgp%5Bj%5D%3D0%3B%0A%20%20%20%20%20%20%20%20fo(k%2C1%2Cn-1)%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if(fp%5Bi1%5D%5Bk%5D%26%26k!%3Dn)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20v%3Dfp%5Bi1%5D%5Bk%5D*ny%5Brd%5Bk%5D%5D%25mo*ny%5B2%5D%25mo%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for(it%3Da1%5Bk%5D.begin()%3Bit!%3Da1%5Bk%5D.end()%3Bit%2B%2B)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20p%3D*it%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20inc(fp%5B1%5Ei1%5D%5Bp%5D%2Cv)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20fo(k%2C1%2Cn)%20gp%5Bk%5D%3Dfp%5B1%5Ei1%5D%5Bk%5D%3B%0A%20%20%20%20%20%20%20%20fo(k%2C1%2Cn)%0A%20%20%20%20%20%20%20%20%20%20%20%20if(gp%5Bk%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20v%3Dgp%5Bk%5D*ny%5Brd%5Bk%5D%5D%25mo%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for(it%3Da1%5Bk%5D.begin()%3Bit!%3Da1%5Bk%5D.end()%3Bit%2B%2B)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20p%3D*it%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20inc(fp%5B1%5Ei1%5D%5Bp%5D%2Cv)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20sum%3D(sum-fp%5B1%5Ei1%5D%5Bn%5D%2Bmo)%25mo%3B%0A%20%20%20%20%20%20%20%20ap%5Bi%2B1%5D%3Dsum%3B%0A%20%20%20%20%20%20%20%20fp%5B1%5Ei1%5D%5Bn%5D%3D0%3B%0A%20%20%20%20%7D%0A%7D%0A%0ALL%20rc%5B4*N%5D%2Crp%5B4*N%5D%2Cle%2Cle1%2Crw%5B4*N%5D%3B%0Avoid%20BM()%0A%7B%0A%20%20%20%20le%3Dle1%3D0%3B%0A%20%20%20%20memset(rc%2C0%2Csizeof(rc))%3B%0A%20%20%20%20memset(rp%2C0%2Csizeof(rp))%3B%0A%20%20%20%20int%20lf%3D0%3BLL%20lv%3D0%3B%0A%20%20%20%20fo(i%2C0%2Cn1)%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20LL%20v%3D0%3B%0A%20%20%20%20%20%20%20%20fo(j%2C1%2Cle)%20inc(v%2Crc%5Bj%5D*ap%5Bi-j%5D%25mo)%3B%0A%20%20%20%20%20%20%20%20if(v%3D%3Dap%5Bi%5D)%20continue%3B%0A%20%20%20%20%20%20%20%20if(le%3D%3D0)%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20le%3Di%2B1%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20fo(j%2C1%2Cle)%20rc%5Bj%5D%3Drp%5Bj%5D%3D0%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20le1%3D0%2Clf%3Di%2Clv%3D(ap%5Bi%5D-v)%25mo%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20continue%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20v%3D(ap%5Bi%5D-v%2Bmo)%25mo%3B%0A%20%20%20%20%20%20%20%20LL%20mul%3Dv*ksm(lv%2Cmo-2)%25mo%3B%0A%0A%20%20%20%20%20%20%20%20fo(j%2C1%2Cle)%20rw%5Bj%5D%3Drc%5Bj%5D%3B%0A%0A%20%20%20%20%20%20%20%20inc(rc%5Bi-lf%5D%2Cmul)%3B%0A%20%20%20%20%20%20%20%20fo(j%2Ci-lf%2B1%2Ci-lf%2Ble1)%20inc(rc%5Bj%5D%2C(mo-mul*rp%5Bj-(i-lf)%5D%25mo)%25mo)%3B%0A%20%20%20%20%20%20%20%20if(le%3Ci-lf%2Ble1)%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20swap(le1%2Cle)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20le%3Di-lf%2Ble%2Clf%3Di%2Clv%3Dv%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20fo(j%2C1%2Cle1)%20rp%5Bj%5D%3Drw%5Bj%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20v%3D0%3B%0A%20%20%20%20%20%20%20%20fo(j%2C1%2Cle)%20inc(v%2Crc%5Bj%5D*ap%5Bi-j%5D%25mo)%3B%0A%20%20%20%20%7D%0A%7D%0A%0Aint%20main()%0A%7B%0A%20%20%20%20ny%5B1%5D%3D1%3B%0A%20%20%20%20fo(i%2C2%2C5000)%20ny%5Bi%5D%3D(-ny%5Bmo%25i%5D*(LL)(mo%2Fi)%25mo%2Bmo)%25mo%3B%0A%20%20%20%20cin%3E%3Et%3B%0A%20%20%20%20while(t--)%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20scanf(%22%25d%25d%22%2C%26n%2C%26m)%3B%0A%20%20%20%20%20%20%20%20fo(i%2C1%2Cn)%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20int%20x%2Cy%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20scanf(%22%25d%25d%22%2C%26x%2C%26y)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20a1%5Bi%5D.clear()%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20memset(rd%2C0%2Csizeof(rd))%3B%0A%20%20%20%20%20%20%20%20m1%3D0%3B%0A%20%20%20%20%20%20%20%20fo(i%2C1%2Cm)%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20int%20x%2Cy%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20scanf(%22%25d%25d%22%2C%26x%2C%26y)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20a1%5Bx%5D.push_back(y)%2Ca1%5By%5D.push_back(x)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20rd%5Bx%5D%2B%2B%2Crd%5By%5D%2B%2B%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20n1%3D2*n%3B%0A%20%20%20%20%20%20%20%20bfs()%3B%0A%20%20%20%20%20%20%20%20BM()%3B%0A%20%20%20%20%20%20%20%20rc%5B0%5D%3D1%2Crp%5B0%5D%3D0%3B%0A%20%20%20%20%20%20%20%20fo(i%2C1%2Cle)%20rc%5Bi%5D%3D(mo-rc%5Bi%5D)%25mo%2Crp%5Bi%5D%3D0%3B%0A%20%20%20%20%20%20%20%20fo(i%2C0%2Cle)%0A%20%20%20%20%20%20%20%20%20%20%20%20fo(j%2C0%2Cn1)%20if(i%2Bj%3C%3Dle)%20inc(rp%5Bi%2Bj%5D%2Crc%5Bi%5D*ap%5Bj%5D%25mo)%3B%0A%20%20%20%20%20%20%20%20LL%20ans%3D0%2Csv%3D0%3B%0A%20%20%20%20%20%20%20%20fo(i%2C0%2Cle%2Bn1)%20inc(ans%2Crp%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20fo(i%2C0%2Cle)%20inc(sv%2Crc%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20printf(%22%25lld%5Cn%22%2Cans*ksm(sv%2Cmo-2)%25mo)%3B%0A%20%20%20%20%7D%0A%7D%0A%60%60%60</center></span>
+</div></body></html> 
